@@ -21,14 +21,15 @@ public class Ability
 public static class AbilityNames {
   public const string Magnet = "Magnet";
   public const string Lasso = "Lasso";
-  public const string Glue = "Glue";
+  public const string Rage = "Rage";
 }
 
 public static class Abilities
 {
   public static Dictionary<string, Ability> dict = new Dictionary<string, Ability>()
   {
-    // [AbilityNames.Magnet] = new Ability(AbilityNames.Magnet, 6.0f, "magenta"),
+    [AbilityNames.Magnet] = new Ability(AbilityNames.Magnet, 6.0f, "magenta"),
     [AbilityNames.Lasso] = new Ability(AbilityNames.Lasso, 1.0f, "cyan"),
+    [AbilityNames.Lasso] = new Ability(AbilityNames.Rage, 7.0f, "purple"),
   };
 }
