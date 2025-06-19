@@ -26,6 +26,13 @@ public static class PlayerBodyV2_Patch
     {
         if (!NetworkManager.Singleton.IsServer) return;
         if (!abilityManagers.TryGetValue(__instance.Player, out AbilityManager abilityManager)) return;
+
+        if (abilityManager.availableAbility == null && abilityManager.CanUse())
+        {
+            Ability nextAbility = abilityManager.GenerateNextAbility();
+            UIChat.Instance.Server_ChatMessageRpc($"<color={nextAbility.color}>{nextAbility.name}</color> is ready to use", UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
+        }
+
         if (abilityManager.activeAbility == null) return;
         
         Puck puck = PuckManager.Instance.GetPuck();
