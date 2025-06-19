@@ -30,6 +30,6 @@ public static class Abilities
   {
     [AbilityNames.Magnet] = new Ability(AbilityNames.Magnet, 6.0f, "magenta"),
     [AbilityNames.Lasso] = new Ability(AbilityNames.Lasso, 1.0f, "cyan"),
-    // [AbilityNames.Glue] = new Ability(AbilityNames.Glue, 4.0f, "yellow"),
+    [AbilityNames.Glue] = new Ability(AbilityNames.Glue, 4.0f, "yellow"),
   };
 }
