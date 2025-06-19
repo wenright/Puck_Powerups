@@ -2,7 +2,6 @@
 
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 public class Ability
 {
@@ -21,12 +20,15 @@ public class Ability
 
 public static class AbilityNames {
   public const string Magnet = "Magnet";
+  public const string Lasso = "Lasso";
+  public const string Glue = "Glue";
 }
 
 public static class Abilities
 {
   public static Dictionary<string, Ability> dict = new Dictionary<string, Ability>()
   {
-    [AbilityNames.Magnet] = new Ability(AbilityNames.Magnet, 3.0f, "magenta")
+    // [AbilityNames.Magnet] = new Ability(AbilityNames.Magnet, 6.0f, "magenta"),
+    [AbilityNames.Lasso] = new Ability(AbilityNames.Lasso, 1.0f, "cyan"),
   };
 }

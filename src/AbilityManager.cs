@@ -7,7 +7,7 @@ public class AbilityManager
   public Ability availableAbility;
   public Ability activeAbility;
   public float lastUsedAt = -Mathf.Infinity;
-  public float nextAbilityAvailableAt = -999;
+  public float nextAbilityAvailableAt = -Mathf.Infinity;
 
   public AbilityManager(Player player)
   {
