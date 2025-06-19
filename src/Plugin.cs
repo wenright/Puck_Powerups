@@ -28,9 +28,6 @@ public class Plugin : IPuckMod
 
       Debug.Log($"Enabled {MOD_GUID}");
       
-      var patches = harmony.GetPatchedMethods();
-      Debug.Log($"Patched methods: {patches.ToList()[0]}");
-      
       return true;
     }
     catch (Exception e)

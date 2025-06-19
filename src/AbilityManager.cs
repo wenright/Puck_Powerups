@@ -6,7 +6,7 @@ public class AbilityManager
   public Player player;
   public Ability activeAbility;
   public float lastUsedAt = -Mathf.Infinity;
-  public float nextAbilityAvailableAt = -Mathf.Infinity;
+  public float nextAbilityAvailableAt = -999;
 
   public AbilityManager(Player player)
   {
@@ -26,6 +26,7 @@ public class AbilityManager
 
     activeAbility = Abilities.dict.ElementAt(Random.Range(0, Abilities.dict.Count)).Value;
     nextAbilityAvailableAt = Time.time + Ability.cooldown + activeAbility.duration;
+    Debug.Log($"Setting next available to {nextAbilityAvailableAt}");
 
     return activeAbility;
   }
