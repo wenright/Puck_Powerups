@@ -15,24 +15,24 @@ public static class UIChatPatch
         message != ___quickChatMessages[0][0])
       return Constants.CONTINUE;
 
-    if (!PlayerBodyV2_Patch.abilityManagers.TryGetValue(player, out AbilityManager abilityManager)) return Constants.CONTINUE;
+    if (!PlayerBodyV2_Patch.PowerupManagers.TryGetValue(player, out PowerupManager PowerupManager)) return Constants.CONTINUE;
 
-    Debug.Log($"Next available at {abilityManager.nextAbilityAvailableAt}. Last used: {abilityManager.lastUsedAt}. Time: {Time.time}. Count: {PlayerBodyV2_Patch.abilityManagers.Count}");
+    Debug.Log($"Next available at {PowerupManager.nextPowerupAvailableAt}. Last used: {PowerupManager.lastUsedAt}. Time: {Time.time}. Count: {PlayerBodyV2_Patch.PowerupManagers.Count}");
 
-    if (!abilityManager.CanUse())
+    if (!PowerupManager.CanUse())
     {
-      Debug.Log("Can't use ability, still on cooldown");
-	    float msRemaining = abilityManager.nextAbilityAvailableAt - Time.time;
+      Debug.Log("Can't use Powerup, still on cooldown");
+	    float msRemaining = PowerupManager.nextPowerupAvailableAt - Time.time;
 		  string formattedMsRemaining = msRemaining.ToString("0.00");
 
-      __instance.Server_ChatMessageRpc($"Ability on cooldown for <b>{formattedMsRemaining}</b>s", __instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
+      __instance.Server_ChatMessageRpc($"Powerup on cooldown for <b>{formattedMsRemaining}</b>s", __instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
       return Constants.SKIP;
     }
-    Debug.Log("Using ability");
+    Debug.Log("Using Powerup");
 
-    Ability abilityUsed = abilityManager.UseAbility();
+    Powerup PowerupUsed = PowerupManager.UsePowerup();
 
-    __instance.Server_ChatMessageRpc(__instance.WrapPlayerUsername(player) + $" used <color={abilityUsed.color}>{abilityUsed.name}</color>", __instance.RpcTarget.ClientsAndHost);
+    __instance.Server_ChatMessageRpc(__instance.WrapPlayerUsername(player) + $" used <color={PowerupUsed.color}>{PowerupUsed.name}</color>", __instance.RpcTarget.ClientsAndHost);
 
     return Constants.SKIP;
   }

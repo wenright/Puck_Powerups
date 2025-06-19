@@ -6,11 +6,11 @@ using UnityEngine;
 
 namespace Powerups;
 
-// Abilities: lasso, magnet, rage, grappling hook, glue
+// Powerups: lasso, magnet, rage, grappling hook, glue
 [HarmonyPatch(typeof(PlayerBodyV2))]
 public static class PlayerBodyV2_Patch
 {
-    public static Dictionary<Player, AbilityManager> abilityManagers = new Dictionary<Player, AbilityManager>();
+    public static Dictionary<Player, PowerupManager> PowerupManagers = new Dictionary<Player, PowerupManager>();
 
     public static float cooldown = 10.0f;
 
@@ -19,7 +19,7 @@ public static class PlayerBodyV2_Patch
     public static void Patch_PlayerBodyV2_OnNetworkPostSpawn(PlayerBodyV2 __instance)
     {
         if (!NetworkManager.Singleton.IsServer) return;
-        abilityManagers[__instance.Player] = new AbilityManager(__instance.Player);
+        PowerupManagers[__instance.Player] = new PowerupManager(__instance.Player);
     }
 
     [HarmonyPostfix]
@@ -27,20 +27,20 @@ public static class PlayerBodyV2_Patch
     public static void Patch_PlayerBodyV2_FixedUpdate(PlayerBodyV2 __instance)
     {
         if (!NetworkManager.Singleton.IsServer) return;
-        if (!abilityManagers.TryGetValue(__instance.Player, out AbilityManager abilityManager)) return;
+        if (!PowerupManagers.TryGetValue(__instance.Player, out PowerupManager PowerupManager)) return;
 
-        if (abilityManager.availableAbility == null && abilityManager.CanUse())
+        if (PowerupManager.availablePowerup == null && PowerupManager.CanUse())
         {
-            Ability nextAbility = abilityManager.GenerateNextAbility();
-            UIChat.Instance.Server_ChatMessageRpc($"<color={nextAbility.color}>{nextAbility.name}</color> is ready to use", UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
+            Powerup nextPowerup = PowerupManager.GenerateNextPowerup();
+            UIChat.Instance.Server_ChatMessageRpc($"<color={nextPowerup.color}>{nextPowerup.name}</color> is ready to use", UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
         }
 
-        if (abilityManager.activeAbility == null) return;
+        if (PowerupManager.activePowerup == null) return;
 
-        // Reset active ability when duration is over
-        if (Time.time > abilityManager.lastUsedAt + abilityManager.activeAbility.duration)
+        // Reset active Powerup when duration is over
+        if (Time.time > PowerupManager.lastUsedAt + PowerupManager.activePowerup.duration)
         {
-            abilityManager.activeAbility = null;
+            PowerupManager.activePowerup = null;
             return;
         }
 
@@ -51,9 +51,9 @@ public static class PlayerBodyV2_Patch
         float puckDistance = Vector3.Distance(puck.transform.position, bladePosition);
         Vector3 puckDirection = (bladePosition - puck.transform.position).normalized;
 
-        switch (abilityManager.activeAbility.name)
+        switch (PowerupManager.activePowerup.name)
         {
-            case AbilityNames.Magnet:
+            case PowerupNames.Magnet:
                 float magnetRange = 3.0f;
                 float magnetForce = 700.0f;
 
@@ -62,7 +62,7 @@ public static class PlayerBodyV2_Patch
                 puck.Rigidbody.AddForce(puckDirection * magnetForce * Time.fixedDeltaTime);
 
                 break;
-            case AbilityNames.Lasso:
+            case PowerupNames.Lasso:
                 float lassoForce = 1000.0f;
                 puck.Rigidbody.AddForce(puckDirection * lassoForce * Time.fixedDeltaTime);
 
@@ -77,8 +77,8 @@ public static class PlayerBodyV2_Patch
     public static bool Patch_OnCollisionEnter(Collision collision, PlayerBodyV2 __instance)
     {
         if (!NetworkManager.Singleton.IsServer) return Constants.CONTINUE;
-        if (!abilityManagers.TryGetValue(__instance.Player, out AbilityManager abilityManager)) return Constants.CONTINUE;
-        if (abilityManager.activeAbility == null || abilityManager.activeAbility.name != AbilityNames.Rage) return Constants.CONTINUE;
+        if (!PowerupManagers.TryGetValue(__instance.Player, out PowerupManager PowerupManager)) return Constants.CONTINUE;
+        if (PowerupManager.activePowerup == null || PowerupManager.activePowerup.name != PowerupNames.Rage) return Constants.CONTINUE;
 
         PlayerBodyV2 component = collision.gameObject.GetComponent<PlayerBodyV2>();
         if (!component)
