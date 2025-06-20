@@ -68,11 +68,11 @@ public static class PlayerBodyV2_Patch
 
                 break;
             case PowerupNames.Grapple:
-                float grappleSpeed = 30.0f;
+                float grappleSpeed = 20.0f;
                 __instance.Rigidbody.linearVelocity = -puckDirection * grappleSpeed;
 
                 // Grapple should end early if we reach the puck
-                if (Vector3.Distance(puck.transform.position, __instance.transform.position) < 1.5f)
+                if (Vector3.Distance(puck.transform.position, bladePosition) < 1.0f)
                 {
                     powerupManager.End();
                 }
