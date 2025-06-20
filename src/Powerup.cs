@@ -23,6 +23,7 @@ public static class PowerupNames {
   public const string Rage = "Rage";
   public const string Grapple = "Grapple";
   public const string Punch = "Punch";
+  public const string Glue = "Glue";
 }
 
 public static class PowerupList
@@ -32,7 +33,8 @@ public static class PowerupList
     [PowerupNames.Magnet] = new Powerup(PowerupNames.Magnet, 6.0f, "magenta"),
     [PowerupNames.Lasso] = new Powerup(PowerupNames.Lasso, 1.0f, "cyan"),
     [PowerupNames.Rage] = new Powerup(PowerupNames.Rage, 7.0f, "purple"),
-    [PowerupNames.Grapple] = new Powerup(PowerupNames.Grapple, 7.0f, "yellow"),
+    [PowerupNames.Grapple] = new Powerup(PowerupNames.Grapple, 7.0f, "teal"),
     [PowerupNames.Punch] = new Powerup(PowerupNames.Punch, 0.5f, "orange"),
+    [PowerupNames.Glue] = new Powerup(PowerupNames.Glue, 2.5f, "yellow"),
   };
 }
