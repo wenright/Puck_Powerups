@@ -8,7 +8,6 @@ public class PowerupManager
   public Powerup activePowerup;
   public float lastUsedAt = -Mathf.Infinity;
   public float nextPowerupAvailableAt = -Mathf.Infinity;
-  public bool hasUsedAbilityOnce = false;
 
   public PowerupManager(Player player)
   {
@@ -23,8 +22,6 @@ public class PowerupManager
   public Powerup UsePowerup()
   {
     if (!CanUse()) return null;
-
-    hasUsedAbilityOnce = true;
 
     lastUsedAt = Time.time;
 
