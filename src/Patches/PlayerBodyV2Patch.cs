@@ -27,6 +27,7 @@ public static class PlayerBodyV2_Patch
     public static void Patch_PlayerBodyV2_FixedUpdate(PlayerBodyV2 __instance)
     {
         if (!NetworkManager.Singleton.IsServer) return;
+        if (GameManager.Instance.Phase != GamePhase.Playing) return;
         if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return;
 
         if (powerupManager.availablePowerup == null && powerupManager.CanUse())

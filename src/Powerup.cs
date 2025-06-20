@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Powerup
 {
   public string name = "unnamed";
-  public static float cooldown = 2.0f;
+  public static float cooldown = 8.0f;
   public float duration = 3.0f;
   public string color;
 
