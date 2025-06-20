@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Powerups;
 
-// Powerups: lasso, magnet, rage, grappling hook, glue
+// Powerups: lasso, magnet, rage, grapple, glue, punch
 [HarmonyPatch(typeof(PlayerBodyV2))]
 public static class PlayerBodyV2_Patch
 {
@@ -32,7 +32,16 @@ public static class PlayerBodyV2_Patch
         if (powerupManager.availablePowerup == null && powerupManager.CanUse())
         {
             Powerup nextPowerup = powerupManager.GenerateNextPowerup();
-            UIChat.Instance.Server_ChatMessageRpc($"<b><color={nextPowerup.color}>{nextPowerup.name}</color></b> is ready to use", UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
+            string message;
+            if (powerupManager.hasUsedAbilityOnce)
+            {
+                message = $"<b><color={nextPowerup.color}>{nextPowerup.name}</color></b> is ready to use";
+            }
+            else
+            {
+                message = $"Press 1-1 to use <b><color={nextPowerup.color}>{nextPowerup.name}</color></b>";
+            }
+            UIChat.Instance.Server_ChatMessageRpc(message, UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
         }
 
         if (powerupManager.activePowerup == null) return;
