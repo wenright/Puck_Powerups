@@ -38,6 +38,13 @@ public class PowerupManager
           puck.Rigidbody.linearVelocity = Vector3.zero;
 
         break;
+      case PowerupNames.Punch:
+        puck = PuckManager.Instance.GetPuck();
+        float punchPower = 20.0f;
+        if (puck)
+          puck.Rigidbody.linearVelocity = (puck.transform.position - player.PlayerBody.transform.position).normalized * punchPower;
+
+        break;
     }
 
     return activePowerup;
