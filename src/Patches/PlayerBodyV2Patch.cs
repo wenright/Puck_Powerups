@@ -32,16 +32,11 @@ public static class PlayerBodyV2_Patch
         if (powerupManager.availablePowerup == null && powerupManager.CanUse())
         {
             Powerup nextPowerup = powerupManager.GenerateNextPowerup();
-            string message;
-            if (powerupManager.hasUsedAbilityOnce)
+            if (!powerupManager.hasUsedAbilityOnce)
             {
-                message = $"<b><color={nextPowerup.color}>{nextPowerup.name}</color></b> is ready to use";
+                UIChat.Instance.Server_ChatMessageRpc($"Double tap 1 to use abilities", UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
             }
-            else
-            {
-                message = $"Press 1-1 to use <b><color={nextPowerup.color}>{nextPowerup.name}</color></b>";
-            }
-            UIChat.Instance.Server_ChatMessageRpc(message, UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
+            UIChat.Instance.Server_ChatMessageRpc($"<b><color={nextPowerup.color}>{nextPowerup.name}</color></b> is ready to use", UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
         }
 
         if (powerupManager.activePowerup == null) return;
