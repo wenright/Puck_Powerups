@@ -11,8 +11,7 @@ public static class UIChatPatch
   [HarmonyPrefix]
   public static bool Patch_UIChat_Server_ProcessPlayerChatMessage(Player player, string message, ulong clientId, bool useTeamChat, bool isMuted, SerializedDictionary<int, string[]> ___quickChatMessages, UIChat __instance)
   {
-    if (!NetworkManager.Singleton.IsServer ||
-        message != ___quickChatMessages[0][0])
+    if (!NetworkManager.Singleton.IsServer || message != ___quickChatMessages[0][0])
       return Constants.CONTINUE;
 
     if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(player, out PowerupManager powerupManager)) return Constants.CONTINUE;

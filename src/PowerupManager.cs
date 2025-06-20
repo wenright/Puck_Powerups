@@ -6,12 +6,15 @@ public class PowerupManager
   public Player player;
   public Powerup availablePowerup;
   public Powerup activePowerup;
-  public float lastUsedAt = -Mathf.Infinity;
-  public float nextPowerupAvailableAt = -Mathf.Infinity;
+  public float lastUsedAt = 0;
+  public float nextPowerupAvailableAt = 0;
 
   public PowerupManager(Player player)
   {
     this.player = player;
+
+    lastUsedAt = Time.time;
+    nextPowerupAvailableAt = Time.time + Powerup.cooldown;
   }
 
   public bool CanUse()
