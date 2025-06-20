@@ -15,14 +15,14 @@ public static class UIChatPatch
         message != ___quickChatMessages[0][0])
       return Constants.CONTINUE;
 
-    if (!PlayerBodyV2_Patch.PowerupManagers.TryGetValue(player, out PowerupManager PowerupManager)) return Constants.CONTINUE;
+    if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(player, out PowerupManager powerupManager)) return Constants.CONTINUE;
 
-    Debug.Log($"Next available at {PowerupManager.nextPowerupAvailableAt}. Last used: {PowerupManager.lastUsedAt}. Time: {Time.time}. Count: {PlayerBodyV2_Patch.PowerupManagers.Count}");
+    Debug.Log($"Next available at {powerupManager.nextPowerupAvailableAt}. Last used: {powerupManager.lastUsedAt}. Time: {Time.time}. Count: {PlayerBodyV2_Patch.powerupManagers.Count}");
 
-    if (!PowerupManager.CanUse())
+    if (!powerupManager.CanUse())
     {
       Debug.Log("Can't use Powerup, still on cooldown");
-	    float msRemaining = PowerupManager.nextPowerupAvailableAt - Time.time;
+	    float msRemaining = powerupManager.nextPowerupAvailableAt - Time.time;
 		  string formattedMsRemaining = msRemaining.ToString("0.00");
 
       __instance.Server_ChatMessageRpc($"Powerup on cooldown for <b>{formattedMsRemaining}</b>s", __instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
@@ -30,9 +30,9 @@ public static class UIChatPatch
     }
     Debug.Log("Using Powerup");
 
-    Powerup PowerupUsed = PowerupManager.UsePowerup();
+    Powerup PowerupUsed = powerupManager.UsePowerup();
 
-    __instance.Server_ChatMessageRpc(__instance.WrapPlayerUsername(player) + $" used <color={PowerupUsed.color}>{PowerupUsed.name}</color>", __instance.RpcTarget.ClientsAndHost);
+    __instance.Server_ChatMessageRpc(__instance.WrapPlayerUsername(player) + $" used <b><color={PowerupUsed.color}>{PowerupUsed.name}</color></b>", __instance.RpcTarget.ClientsAndHost);
 
     return Constants.SKIP;
   }

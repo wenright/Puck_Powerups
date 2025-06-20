@@ -29,6 +29,17 @@ public class PowerupManager
     availablePowerup = null;
     nextPowerupAvailableAt = Time.time + Powerup.cooldown + activePowerup.duration;
 
+    // Special actions that happen when powerup is activated. Per-frame actions happen in PlayerBodyV2Patch
+    switch (activePowerup.name)
+    {
+      case PowerupNames.Lasso:
+        Puck puck = PuckManager.Instance.GetPuck();
+        if (puck)
+          puck.Rigidbody.linearVelocity = Vector3.zero;
+
+        break;
+    }
+
     return activePowerup;
   }
 
@@ -39,5 +50,16 @@ public class PowerupManager
     availablePowerup = PowerupList.dict.ElementAt(Random.Range(0, PowerupList.dict.Count)).Value;
 
     return availablePowerup;
+  }
+
+  public void End()
+  {
+    // Special actions that happen when powerup is ended
+    // switch (activePowerup.name)
+    // {
+
+    // }
+
+    activePowerup = null;
   }
 }
