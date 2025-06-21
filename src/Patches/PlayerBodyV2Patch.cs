@@ -27,7 +27,7 @@ public static class PlayerBodyV2_Patch
     public static void Patch_PlayerBodyV2_FixedUpdate(PlayerBodyV2 __instance)
     {
         if (!NetworkManager.Singleton.IsServer) return;
-        if (GameManager.Instance.Phase != GamePhase.Playing) return;
+        if (GameManager.Instance.Phase != GamePhase.Playing && GameManager.Instance.Phase != GamePhase.Warmup) return;
         if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return;
 
         if (powerupManager.availablePowerup == null && powerupManager.CanUse())
@@ -49,8 +49,6 @@ public static class PlayerBodyV2_Patch
         if (!puck) return;
 
         Vector3 bladePosition = __instance.Stick.BladeHandlePosition;
-        float puckDistance = Vector3.Distance(puck.transform.position, bladePosition);
-        Vector3 puckDirection = (bladePosition - puck.transform.position).normalized;
 
         switch (powerupManager.activePowerup.name)
         {
@@ -58,22 +56,28 @@ public static class PlayerBodyV2_Patch
                 float magnetRange = 3.0f;
                 float magnetForce = 700.0f;
 
+                float puckDistance = Vector3.Distance(puck.transform.position, bladePosition);
                 if (puckDistance > magnetRange) return;
 
+                Vector3 puckDirection = (bladePosition - puck.transform.position).normalized;
                 puck.Rigidbody.AddForce(puckDirection * magnetForce * Time.fixedDeltaTime);
 
                 break;
             case PowerupNames.Lasso:
                 float lassoForce = 1000.0f;
+
+                puckDirection = (bladePosition - puck.transform.position).normalized;
                 puck.Rigidbody.AddForce(puckDirection * lassoForce * Time.fixedDeltaTime);
 
                 break;
             case PowerupNames.Grapple:
                 float grappleSpeed = 20.0f;
-                __instance.Rigidbody.linearVelocity = -puckDirection * grappleSpeed;
+                
+                Vector3 directionFromPlayer = (__instance.transform.position - puck.transform.position).normalized;
+                __instance.Rigidbody.linearVelocity = -(directionFromPlayer) * grappleSpeed;
 
                 // Grapple should end early if we reach the puck
-                if (Vector3.Distance(puck.transform.position, bladePosition) < 1.0f)
+                if (Vector3.Distance(puck.transform.position, __instance.transform.position) < 1.0f)
                 {
                     powerupManager.End();
                 }
