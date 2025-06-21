@@ -1,0 +1,13 @@
+# Puck Powerups
+Adds powerups. Completely server-side, so clients don't need to install anything
+
+<b>Magnet</b>: Puck is magnetized towards your stick if it's close enough<br/>
+<b>Lasso</b>: Pulls puck towards you quickly<br/>
+<b>Rage</b>: Knocks down anyone you touch for 7 seconds<br/>
+<b>Grapple</b>: Launches you towards the puck<br/>
+<b>Punch</b>: Pushes the puck forward<br/>
+<b>Glue</b>: Puck attaches to your stick for 2 seconds<br/>
+<b>Double tap 1 to use your ability</b><br/>
+
+## Installation 
+Download and unzip the latest [release](https://github.com/wenright/Puck_Powerups/releases) into your Puck/Plugins folder
