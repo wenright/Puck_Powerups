@@ -54,7 +54,7 @@ public static class PlayerBodyV2_Patch
         {
             case PowerupNames.Magnet:
                 float magnetRange = 3.0f;
-                float magnetForce = 700.0f;
+                float magnetForce = 600.0f;
 
                 float puckDistance = Vector3.Distance(puck.transform.position, bladePosition);
                 if (puckDistance > magnetRange) return;
@@ -72,12 +72,12 @@ public static class PlayerBodyV2_Patch
                 break;
             case PowerupNames.Grapple:
                 float grappleSpeed = 20.0f;
-                
+
                 Vector3 directionFromPlayer = (__instance.transform.position - puck.transform.position).normalized;
                 __instance.Rigidbody.linearVelocity = -(directionFromPlayer) * grappleSpeed;
 
                 // Grapple should end early if we reach the puck
-                if (Vector3.Distance(puck.transform.position, __instance.transform.position) < 1.0f)
+                if (Vector3.Distance(puck.transform.position, __instance.transform.position) < 1.5f)
                 {
                     powerupManager.End();
                 }
