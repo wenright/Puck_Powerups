@@ -11,3 +11,5 @@ Adds powerups. Completely server-side, so clients don't need to install anything
 
 ## Installation 
 Download and unzip the latest [release](https://github.com/wenright/Puck_Powerups/releases) into your Puck/Plugins folder
+
+You may also want to install the [motd](https://github.com/NAsejevs/GAFURIXCustomMOTD) mod and add instructions on how to activate powerups so new players don't have to ask each time. You can copy my sample motd [here](https://github.com/wenright/Puck_Powerups/blob/main/motd.txt).
