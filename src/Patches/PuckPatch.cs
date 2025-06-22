@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+using System.Reflection;
 using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
@@ -10,10 +10,11 @@ public static class Puck_Patch
 {
   public static Stick glueTarget;
   public static Vector3 offset = Vector3.zero;
+  public static FieldInfo bladeHandleField = AccessTools.Field(typeof(Stick), "bladeHandle");
 
   [HarmonyPostfix]
-  [HarmonyPatch("OnCollisionEnter")]
-  public static void Patch_Puck_OnCollisionEnter(Collision collision, Puck __instance)
+  [HarmonyPatch("OnCollisionStay")]
+  public static void Patch_Puck_OnCollisionStay(Collision collision, Puck __instance)
   {
     if (!NetworkManager.Singleton.IsServer) return;
     if (glueTarget || collision == null || collision.gameObject == null) return;
@@ -23,11 +24,13 @@ public static class Puck_Patch
     if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(stick.Player, out PowerupManager powerupManager)) return;
     if (powerupManager.activePowerup == null || powerupManager.activePowerup.name != PowerupNames.Glue) return;
 
-
-    offset = __instance.transform.position - stick.BladeHandlePosition;
-    glueTarget = stick;
-    __instance.Rigidbody.useGravity = false;
-    __instance.Rigidbody.detectCollisions = false;
+    if (!glueTarget)
+    {
+      glueTarget = stick;
+      offset = __instance.transform.position - stick.BladeHandlePosition;
+      __instance.Rigidbody.useGravity = false;
+      __instance.Rigidbody.detectCollisions = false;
+    }
   }
 
   [HarmonyPostfix]
@@ -48,8 +51,11 @@ public static class Puck_Patch
     }
     else
     {
-      __instance.Rigidbody.MovePosition(glueTarget.BladeHandlePosition + (glueTarget.transform.rotation * offset));
-      __instance.Rigidbody.MoveRotation(glueTarget.transform.rotation);
+      GameObject bladeHandle = (GameObject)bladeHandleField.GetValue(glueTarget);
+      if (bladeHandle == null) return;
+
+      __instance.Rigidbody.MovePosition(glueTarget.BladeHandlePosition + (bladeHandle.transform.rotation * offset));
+      __instance.Rigidbody.MoveRotation(bladeHandle.transform.rotation);
       __instance.Rigidbody.linearVelocity = Vector3.zero;
     }
   }

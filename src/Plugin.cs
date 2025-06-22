@@ -1,8 +1,6 @@
 using System;
-using System.Linq;
 using HarmonyLib;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Powerups;
 
