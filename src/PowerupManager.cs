@@ -64,17 +64,6 @@ public class PowerupManager
 
   public void End()
   {
-    // Special actions that happen when powerup is ended
-    switch (activePowerup.name)
-    {
-      case PowerupNames.Glue:
-        Puck puck = PuckManager.Instance.GetPuck();
-        if (puck)
-          puck.Rigidbody.linearVelocity = player.Stick.Rigidbody.linearVelocity;
-          
-        break;
-    }
-
     activePowerup = null;
   }
 }

@@ -29,7 +29,7 @@ public static class Puck_Patch
       glueTarget = stick;
       offset = __instance.transform.position - stick.BladeHandlePosition;
       __instance.Rigidbody.useGravity = false;
-      __instance.Rigidbody.detectCollisions = false;
+      Physics.IgnoreCollision(__instance.GetComponent<Collider>(), collision.collider, true);
     }
   }
 
@@ -47,7 +47,7 @@ public static class Puck_Patch
       glueTarget = null;
       offset = Vector3.zero;
       __instance.Rigidbody.useGravity = true;
-      __instance.Rigidbody.detectCollisions = true;
+      Physics.IgnoreCollision(__instance.GetComponent<Collider>(), glueTarget.GetComponent<Collider>(), false);
     }
     else
     {
@@ -56,7 +56,7 @@ public static class Puck_Patch
 
       __instance.Rigidbody.MovePosition(glueTarget.BladeHandlePosition + (bladeHandle.transform.rotation * offset));
       __instance.Rigidbody.MoveRotation(bladeHandle.transform.rotation);
-      __instance.Rigidbody.linearVelocity = Vector3.zero;
+      __instance.Rigidbody.linearVelocity = glueTarget.Rigidbody.linearVelocity;
     }
   }
 }
