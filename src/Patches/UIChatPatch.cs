@@ -17,7 +17,7 @@ public static class UIChatPatch
     if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(player, out PowerupManager powerupManager)) return Constants.CONTINUE;
 
     float msRemaining = powerupManager.nextPowerupAvailableAt - Time.time;
-    string formattedMsRemaining = msRemaining.ToString("0.00");
+    string formattedMsRemaining = msRemaining.ToString("0.0");
 
     if (!powerupManager.CanUse())
     {
