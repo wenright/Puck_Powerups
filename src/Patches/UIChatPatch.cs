@@ -19,22 +19,18 @@ public static class UIChatPatch
     float msRemaining = powerupManager.nextPowerupAvailableAt - Time.time;
     string formattedMsRemaining = msRemaining.ToString("0.00");
 
+    if (!powerupManager.CanUse())
+    {
+      __instance.Server_ChatMessageRpc($"Powerup on cooldown for <b>{formattedMsRemaining}</b>s", __instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
+      return Constants.SKIP;
+    }
+
     if (message == ___quickChatMessages[0][1])
     {
       if (powerupManager.CanUse())
       {
         __instance.Server_ChatMessageRpc($"<b><color={powerupManager.availablePowerup.color}>{powerupManager.availablePowerup.name}</color></b> is ready to use", UIChat.Instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
       }
-      else
-      {
-        __instance.Server_ChatMessageRpc($"Powerup on cooldown for <b>{formattedMsRemaining}</b>s", __instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
-      }
-      return Constants.SKIP;
-    }
-
-    if (!powerupManager.CanUse())
-    {
-      __instance.Server_ChatMessageRpc($"Powerup on cooldown for <b>{formattedMsRemaining}</b>s", __instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
       return Constants.SKIP;
     }
 
