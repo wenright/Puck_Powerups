@@ -43,7 +43,7 @@ public class PowerupManager
         break;
       case PowerupNames.Punch:
         puck = PuckManager.Instance.GetPuck();
-        float punchPower = 20.0f;
+        float punchPower = 30.0f;
         if (puck)
           puck.Rigidbody.linearVelocity = (puck.transform.position - player.PlayerBody.transform.position).normalized * punchPower;
 
@@ -64,12 +64,6 @@ public class PowerupManager
 
   public void End()
   {
-    // Special actions that happen when powerup is ended
-    // switch (activePowerup.name)
-    // {
-
-    // }
-
     activePowerup = null;
   }
 }

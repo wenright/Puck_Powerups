@@ -6,7 +6,6 @@ using UnityEngine;
 
 namespace Powerups;
 
-// Powerups: lasso, magnet, rage, grapple, glue, punch
 [HarmonyPatch(typeof(PlayerBodyV2))]
 public static class PlayerBodyV2_Patch
 {
