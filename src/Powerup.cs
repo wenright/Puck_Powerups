@@ -31,7 +31,7 @@ public static class PowerupList
 {
   public static Dictionary<string, Powerup> dict = new Dictionary<string, Powerup>()
   {
-    [PowerupNames.Magnet] = new Powerup(PowerupNames.Magnet, 7.0f, "magenta"),
+    [PowerupNames.Magnet] = new Powerup(PowerupNames.Magnet, 6.5f, "magenta"),
     [PowerupNames.Lasso] = new Powerup(PowerupNames.Lasso, 1.0f, "cyan"),
     [PowerupNames.Rage] = new Powerup(PowerupNames.Rage, 7.0f, "purple"),
     [PowerupNames.Grapple] = new Powerup(PowerupNames.Grapple, 7.0f, "teal"),
