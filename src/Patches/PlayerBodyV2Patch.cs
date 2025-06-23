@@ -102,7 +102,7 @@ public static class PlayerBodyV2_Patch
 
         component.OnSlip();
 
-        float knockbackPower = 7.0f;
+        float knockbackPower = 6.0f;
         component.Rigidbody.AddForceAtPosition(-collision.relativeVelocity.normalized * knockbackPower, __instance.Rigidbody.worldCenterOfMass + __instance.transform.up * 0.5f, ForceMode.VelocityChange);
 
         return Constants.SKIP;
