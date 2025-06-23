@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Linq;
 using Unity.Netcode;
 using UnityEngine;
@@ -43,11 +44,28 @@ public class PowerupManager
 
         break;
       case PowerupNames.Punch:
-        puck = PuckManager.Instance.GetPuck();
         float punchPower = 30.0f;
+        
+        puck = PuckManager.Instance.GetPuck();
         if (puck)
           puck.Rigidbody.linearVelocity = (puck.transform.position - player.PlayerBody.transform.position).normalized * punchPower;
 
+        break;
+      case PowerupNames.Kick:
+        float kickPower = 3.5f;
+      
+        PlayerTeam enemyTeam = player.Team.Value == PlayerTeam.Blue ? PlayerTeam.Red : PlayerTeam.Blue;
+        List<Player> enemies = PlayerManager.Instance.GetPlayersByTeam(enemyTeam);
+        if (enemies.Count == 0) break;
+
+        enemies.Sort((e1, e2) => Mathf.RoundToInt((Vector3.Distance(player.transform.position, e1.transform.position) - Vector3.Distance(player.transform.position, e2.transform.position)) * 100));
+        Player enemy = enemies[0];
+        PlayerBodyV2 enemyBody = enemy.GetComponentInChildren<PlayerBodyV2>();
+        if (enemyBody == null) break;
+
+        enemyBody.OnSlip();
+        enemyBody.Rigidbody.AddForceAtPosition((enemyBody.transform.position - player.PlayerBody.transform.position).normalized * kickPower, player.PlayerBody.Rigidbody.worldCenterOfMass + player.PlayerBody.transform.up * 0.5f, ForceMode.VelocityChange);
+      
         break;
     }
 

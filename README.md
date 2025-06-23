@@ -7,6 +7,7 @@ Adds powerups. Completely server-side, so clients don't need to install anything
 <b>Grapple</b>: Launches you towards the puck<br/>
 <b>Punch</b>: Pushes the puck forward<br/>
 <b>Glue</b>: Puck attaches to your stick for 2 seconds<br/>
+<b>Kick</b>: Knocks over the nearest enemy<br/>
 <b>Double tap 1 to use your ability</b><br/>
 
 ## Installation 

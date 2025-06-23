@@ -5,7 +5,7 @@ using System.Collections.Generic;
 public class Powerup
 {
   public string name = "unnamed";
-  public static float cooldown = 8.0f;
+  public static float cooldown = 0.0f;
   public float duration = 3.0f;
   public string color;
 
@@ -24,6 +24,7 @@ public static class PowerupNames {
   public const string Grapple = "Grapple";
   public const string Punch = "Punch";
   public const string Glue = "Glue";
+  public const string Kick = "Kick";
 }
 
 public static class PowerupList
@@ -36,5 +37,6 @@ public static class PowerupList
     [PowerupNames.Grapple] = new Powerup(PowerupNames.Grapple, 7.0f, "teal"),
     [PowerupNames.Punch] = new Powerup(PowerupNames.Punch, 0.5f, "orange"),
     [PowerupNames.Glue] = new Powerup(PowerupNames.Glue, 2.5f, "yellow"),
+    [PowerupNames.Kick] = new Powerup(PowerupNames.Kick, 0.5f, "lightblue"),
   };
 }
