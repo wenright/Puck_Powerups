@@ -58,7 +58,7 @@ public class PowerupManager
         List<Player> enemies = PlayerManager.Instance.GetPlayersByTeam(enemyTeam);
         if (enemies.Count == 0) break;
 
-        enemies.Sort((e1, e2) => Mathf.RoundToInt((Vector3.Distance(player.transform.position, e1.transform.position) - Vector3.Distance(player.transform.position, e2.transform.position)) * 100));
+        enemies.Sort((e1, e2) => Mathf.RoundToInt((Vector3.Distance(player.PlayerBody.transform.position, e1.PlayerBody.transform.position) - Vector3.Distance(player.PlayerBody.transform.position, e2.PlayerBody.transform.position)) * 100));
         Player enemy = enemies[0];
         PlayerBodyV2 enemyBody = enemy.GetComponentInChildren<PlayerBodyV2>();
         if (enemyBody == null) break;
