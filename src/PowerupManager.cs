@@ -1,4 +1,5 @@
 using System.Linq;
+using Unity.Netcode;
 using UnityEngine;
 
 public class PowerupManager
@@ -64,6 +65,9 @@ public class PowerupManager
 
   public void End()
   {
+    if (activePowerup.duration > 2.0f) {
+      UIChat.Instance.Server_ChatMessageRpc($"<b><color={availablePowerup.color}>{availablePowerup.name}</color></b> ended", UIChat.Instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
+    }
     activePowerup = null;
   }
 }
