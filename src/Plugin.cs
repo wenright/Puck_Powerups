@@ -13,7 +13,7 @@ public class Constants
 public class Plugin : IPuckMod
 {
   public static string MOD_NAME = "Powerups";
-  public static string MOD_VERSION = "0.3.0";
+  public static string MOD_VERSION = "0.4.0";
   public static string MOD_GUID = "wenright.powerups";
 
   static readonly Harmony harmony = new Harmony(MOD_GUID);
