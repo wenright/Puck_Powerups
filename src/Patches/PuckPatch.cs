@@ -44,10 +44,10 @@ public static class Puck_Patch
 
     if (powerupManager.activePowerup == null || powerupManager.activePowerup.name != PowerupNames.Glue)
     {
+      Physics.IgnoreCollision(__instance.GetComponent<Collider>(), glueTarget.GetComponent<Collider>(), false);
       glueTarget = null;
       offset = Vector3.zero;
       __instance.Rigidbody.useGravity = true;
-      Physics.IgnoreCollision(__instance.GetComponent<Collider>(), glueTarget.GetComponent<Collider>(), false);
     }
     else
     {
