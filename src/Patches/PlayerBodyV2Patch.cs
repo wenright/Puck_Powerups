@@ -51,8 +51,8 @@ public static class PlayerBodyV2_Patch
         switch (powerupManager.activePowerup.name)
         {
             case PowerupNames.Magnet:
-                float magnetRange = 3.0f;
-                float magnetForce = 600.0f;
+                float magnetRange = 3.5f;
+                float magnetForce = 700.0f;
 
                 float puckDistance = Vector3.Distance(puck.transform.position, bladePosition);
                 if (puckDistance > magnetRange) return;
