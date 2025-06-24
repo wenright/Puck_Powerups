@@ -40,11 +40,11 @@ public class PowerupManager
       case PowerupNames.Lasso:
         Puck puck = PuckManager.Instance.GetPuck();
         if (puck)
-          puck.Rigidbody.linearVelocity = Vector3.zero;
+          puck.Rigidbody.linearVelocity /= 2;
 
         break;
       case PowerupNames.Punch:
-        float punchPower = 30.0f;
+        float punchPower = 27.0f;
         
         puck = PuckManager.Instance.GetPuck();
         if (puck)
@@ -52,7 +52,7 @@ public class PowerupManager
 
         break;
       case PowerupNames.Kick:
-        float kickPower = 3.5f;
+        float kickPower = 5.0f;
       
         PlayerTeam enemyTeam = player.Team.Value == PlayerTeam.Blue ? PlayerTeam.Red : PlayerTeam.Blue;
         List<Player> enemies = PlayerManager.Instance.GetPlayersByTeam(enemyTeam);

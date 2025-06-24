@@ -28,8 +28,6 @@ public static class Puck_Patch
     {
       glueTarget = stick;
       offset = __instance.transform.position - stick.BladeHandlePosition;
-      __instance.Rigidbody.useGravity = false;
-      Physics.IgnoreCollision(__instance.GetComponent<Collider>(), collision.collider, true);
     }
   }
 
@@ -44,10 +42,8 @@ public static class Puck_Patch
 
     if (powerupManager.activePowerup == null || powerupManager.activePowerup.name != PowerupNames.Glue)
     {
-      Physics.IgnoreCollision(__instance.GetComponent<Collider>(), glueTarget.GetComponent<Collider>(), false);
       glueTarget = null;
       offset = Vector3.zero;
-      __instance.Rigidbody.useGravity = true;
     }
     else
     {
