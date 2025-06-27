@@ -4,8 +4,8 @@ using System.Collections.Generic;
 
 public class Powerup
 {
-  public string name = "unnamed";
-  public static float cooldown = 9.0f;
+  public string name;
+  public static float cooldown = 10.0f;
   public float duration;
   public string color;
 
