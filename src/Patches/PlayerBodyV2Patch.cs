@@ -52,7 +52,7 @@ public static class PlayerBodyV2_Patch
         {
             case PowerupNames.Magnet:
                 float magnetRange = 3.5f;
-                float magnetForce = 650.0f;
+                float magnetForce = 600.0f;
 
                 float puckDistance = Vector3.Distance(puck.transform.position, bladePosition);
                 if (puckDistance > magnetRange) return;
