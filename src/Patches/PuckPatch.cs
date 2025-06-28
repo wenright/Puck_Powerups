@@ -24,10 +24,13 @@ public static class Puck_Patch
     if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(stick.Player, out PowerupManager powerupManager)) return;
     if (powerupManager.activePowerup == null || powerupManager.activePowerup.name != PowerupNames.Glue) return;
 
+    float glueDurationSeconds = 1.75f;
+
     if (!glueTarget)
     {
       glueTarget = stick;
       offset = __instance.transform.position - stick.BladeHandlePosition;
+      powerupManager.lastUsedAt = Time.time - powerupManager.activePowerup.duration + glueDurationSeconds;
     }
   }
 

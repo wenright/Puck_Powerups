@@ -85,14 +85,14 @@ public static class PlayerBodyV2_Patch
     }
 
 
-    // Handles Rage powerup
+    // Handles Rage powerup, and ending glue on collisions
     [HarmonyPrefix]
     [HarmonyPatch("OnCollisionEnter")]
     public static bool Patch_OnCollisionEnter(Collision collision, PlayerBodyV2 __instance)
     {
         if (!NetworkManager.Singleton.IsServer) return Constants.CONTINUE;
         if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return Constants.CONTINUE;
-        if (powerupManager.activePowerup == null || powerupManager.activePowerup.name != PowerupNames.Rage) return Constants.CONTINUE;
+        if (powerupManager.activePowerup == null) return Constants.CONTINUE;
 
         PlayerBodyV2 component = collision.gameObject.GetComponent<PlayerBodyV2>();
         if (!component)
@@ -100,11 +100,21 @@ public static class PlayerBodyV2_Patch
             return Constants.CONTINUE;
         }
 
-        component.OnSlip();
+        switch (powerupManager.activePowerup.name)
+        {
+            case PowerupNames.Rage:
+                component.OnSlip();
 
-        float knockbackPower = 6.0f;
-        component.Rigidbody.AddForceAtPosition(-collision.relativeVelocity.normalized * knockbackPower, __instance.Rigidbody.worldCenterOfMass + __instance.transform.up * 0.5f, ForceMode.VelocityChange);
+                float knockbackPower = 6.0f;
+                component.Rigidbody.AddForceAtPosition(-collision.relativeVelocity.normalized * knockbackPower, __instance.Rigidbody.worldCenterOfMass + __instance.transform.up * 0.5f, ForceMode.VelocityChange);
 
-        return Constants.SKIP;
+                return Constants.SKIP;
+            case PowerupNames.Glue:
+                powerupManager.End();
+            
+                break;
+        }
+
+        return Constants.CONTINUE;
     }
 }

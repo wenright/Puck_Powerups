@@ -52,7 +52,7 @@ public class PowerupManager
 
         break;
       case PowerupNames.Kick:
-        float kickPower = 11.0f;
+        float kickPower = 11.5f;
       
         PlayerTeam enemyTeam = player.Team.Value == PlayerTeam.Blue ? PlayerTeam.Red : PlayerTeam.Blue;
         List<Player> enemies = PlayerManager.Instance.GetPlayersByTeam(enemyTeam);

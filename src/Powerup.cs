@@ -36,7 +36,7 @@ public static class PowerupList
     [PowerupNames.Rage] = new Powerup(PowerupNames.Rage, 7.0f, "purple"),
     [PowerupNames.Grapple] = new Powerup(PowerupNames.Grapple, 7.0f, "teal"),
     [PowerupNames.Punch] = new Powerup(PowerupNames.Punch, 0.5f, "orange"),
-    [PowerupNames.Glue] = new Powerup(PowerupNames.Glue, 2.5f, "yellow"),
+    [PowerupNames.Glue] = new Powerup(PowerupNames.Glue, 7.5f, "yellow"),
     [PowerupNames.Kick] = new Powerup(PowerupNames.Kick, 0.5f, "lightblue"),
   };
 }
