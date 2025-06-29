@@ -1,5 +1,5 @@
 # Puck Powerups
-Adds powerups. Completely server-side, so clients don't need to install anything
+Adds powerups. Completely server-side, so clients don't need to install anything. Overrides the first 2 quick chats options ("I got it!" and "Need stamina"). Use 1-1 to activate your powerup, and 1-2 to check what your powerup is or to see its cooldown.
 
 <b>Magnet</b>: Puck is magnetized towards your stick if it's close enough<br/>
 <b>Lasso</b>: Pulls puck towards you quickly<br/>
