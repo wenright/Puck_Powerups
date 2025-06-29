@@ -16,7 +16,7 @@ public static class PlayerBodyV2_Patch
     [HarmonyPatch("OnNetworkPostSpawn")]
     public static void Patch_PlayerBodyV2_OnNetworkPostSpawn(PlayerBodyV2 __instance)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
+        if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
         powerupManagers[__instance.Player] = new PowerupManager(__instance.Player);
     }
 
@@ -24,7 +24,7 @@ public static class PlayerBodyV2_Patch
     [HarmonyPatch("FixedUpdate")]
     public static void Patch_PlayerBodyV2_FixedUpdate(PlayerBodyV2 __instance)
     {
-        if (!NetworkManager.Singleton.IsServer) return;
+        if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
         if (GameManager.Instance.Phase != GamePhase.Playing) return;
         if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return;
 
@@ -90,7 +90,7 @@ public static class PlayerBodyV2_Patch
     [HarmonyPatch("OnCollisionEnter")]
     public static bool Patch_OnCollisionEnter(Collision collision, PlayerBodyV2 __instance)
     {
-        if (!NetworkManager.Singleton.IsServer) return Constants.CONTINUE;
+        if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return Constants.CONTINUE;
         if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return Constants.CONTINUE;
         if (powerupManager.activePowerup == null) return Constants.CONTINUE;
 

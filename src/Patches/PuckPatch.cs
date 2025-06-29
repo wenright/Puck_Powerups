@@ -16,7 +16,7 @@ public static class Puck_Patch
   [HarmonyPatch("OnCollisionStay")]
   public static void Patch_Puck_OnCollisionStay(Collision collision, Puck __instance)
   {
-    if (!NetworkManager.Singleton.IsServer) return;
+    if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
     if (glueTarget || collision == null || collision.gameObject == null) return;
 
     Stick stick = collision.gameObject.GetComponent<Stick>();
@@ -38,7 +38,7 @@ public static class Puck_Patch
   [HarmonyPatch("FixedUpdate")]
   public static void Patch_PlayerBodyV2_FixedUpdate(Puck __instance)
   {
-    if (!NetworkManager.Singleton.IsServer) return;
+    if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
     if (!glueTarget) return;
     if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(glueTarget.Player, out PowerupManager powerupManager)) return;
     if (powerupManager == null) return;
