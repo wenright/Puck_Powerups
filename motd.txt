@@ -4,4 +4,5 @@
 <b><color=teal>Grapple</color></b>: Launches you towards the puck
 <b><color=orange>Punch</color></b>: Pushes the puck forward
 <b><color=yellow>Glue</color></b>: Puck attaches to your stick for 2 seconds
+<b><color=lightblue>Kick</color></b>: Knocks over the nearest player on the other team
 <b>Double tap 1 to use your powerup, and 1-2 to view your current powerup</b>
