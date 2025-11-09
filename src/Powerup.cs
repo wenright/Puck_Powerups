@@ -25,6 +25,7 @@ public static class PowerupNames {
   public const string Punch = "Punch";
   public const string Glue = "Glue";
   public const string Kick = "Kick";
+  public const string Tornado = "Tornado";
 }
 
 public static class PowerupList
@@ -38,5 +39,6 @@ public static class PowerupList
     [PowerupNames.Punch] = new Powerup(PowerupNames.Punch, 0.5f, "orange"),
     [PowerupNames.Glue] = new Powerup(PowerupNames.Glue, 7.5f, "yellow"),
     [PowerupNames.Kick] = new Powerup(PowerupNames.Kick, 0.5f, "lightblue"),
+    [PowerupNames.Tornado] = new Powerup(PowerupNames.Tornado, 5f, "green"),
   };
 }

@@ -9,6 +9,7 @@ namespace Powerups;
 public static class PlayerBodyV2_Patch
 {
     public static Dictionary<Player, PowerupManager> powerupManagers = new Dictionary<Player, PowerupManager>();
+    public static Dictionary<Player, Collider[]> tornadoCollisions = new Dictionary<Player, Collider[]>();
 
     public static float cooldown = 10.0f;
 
@@ -18,6 +19,7 @@ public static class PlayerBodyV2_Patch
     {
         if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
         powerupManagers[__instance.Player] = new PowerupManager(__instance.Player);
+        tornadoCollisions[__instance.Player] = new Collider[32];
     }
 
     [HarmonyPostfix]
@@ -78,6 +80,41 @@ public static class PlayerBodyV2_Patch
                 if (Vector3.Distance(puck.transform.position, __instance.transform.position) < 1.5f)
                 {
                     powerupManager.End();
+                }
+                
+                break;
+            case PowerupNames.Tornado:
+                float upwardForce = 1500.0f;
+                float tangentialForce = 200.0f;
+                float inwardForce = 1250.0f;
+                float maxRange = 6.0f;
+                float idealDistance = 3.5f;
+
+                var collisions = tornadoCollisions[__instance.Player];
+                Physics.OverlapSphereNonAlloc(__instance.transform.position, maxRange, collisions);
+
+                foreach (var collision in collisions)
+                {
+                    if (!collision || !collision.gameObject) return;
+                    
+                    Rigidbody rb = collision.GetComponent<Rigidbody>();
+                    
+                    if (!rb) continue;
+                    if (collision.GetComponent<PlayerBodyV2>() == __instance) continue;
+                    
+                    directionFromPlayer = (__instance.transform.position - rb.transform.position);
+
+                    Vector3 upward = Vector3.up * upwardForce;
+                    Vector3 tangential = Vector3.Cross(Vector3.up, directionFromPlayer) * tangentialForce;
+                    Vector3 inward = directionFromPlayer * inwardForce;
+
+                    if (Vector3.Distance(rb.transform.position, __instance.transform.position) < idealDistance)
+                    { 
+                        inward *= -1;
+                    }
+                    
+                    Debug.Log($"{upward} / {tangential} / {inward}");
+                    rb.AddForce(upward + tangential + inward);
                 }
                 
                 break;
