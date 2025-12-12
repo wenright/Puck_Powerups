@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
+using Powerups;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -52,7 +53,7 @@ public class PowerupManager
 
         break;
       case PowerupNames.Kick:
-        float kickPower = 11.5f;
+        float kickPower = 13.5f;
       
         PlayerTeam enemyTeam = player.Team.Value == PlayerTeam.Blue ? PlayerTeam.Red : PlayerTeam.Blue;
         List<Player> enemies = PlayerManager.Instance.GetPlayersByTeam(enemyTeam);
@@ -66,6 +67,10 @@ public class PowerupManager
         enemyBody.OnSlip();
         enemyBody.Rigidbody.AddForceAtPosition((enemyBody.transform.position - player.PlayerBody.transform.position).normalized * kickPower, player.PlayerBody.Rigidbody.worldCenterOfMass + player.PlayerBody.transform.up * 0.5f, ForceMode.VelocityChange);
       
+        break;
+      case PowerupNames.LowGrav:
+        SetGravity(false);
+
         break;
     }
 
@@ -83,9 +88,43 @@ public class PowerupManager
 
   public void End()
   {
+    if (CountActivePowerupByName(PowerupNames.LowGrav) <= 1)
+    {
+      SetGravity(true);
+    }
+    
     if (activePowerup.duration > 2.0f) {
       UIChat.Instance.Server_ChatMessageRpc($"<b><color={activePowerup.color}>{activePowerup.name}</color></b> ended", UIChat.Instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
     }
     activePowerup = null;
+  }
+
+  private void SetGravity(bool enabled)
+  {
+    Puck[] pucks = GameObject.FindObjectsByType<Puck>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+    foreach (Puck puck in pucks)
+    {
+      puck.Rigidbody.useGravity = enabled;
+    }
+
+    PlayerBodyV2[] players = GameObject.FindObjectsByType<PlayerBodyV2>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+    foreach (PlayerBodyV2 player in players)
+    {
+      player.Rigidbody.useGravity = enabled;
+    }
+  }
+
+  private int CountActivePowerupByName(string name)
+  {
+    int powerupCount = 0;
+    foreach (var manager in PlayerBodyV2_Patch.powerupManagers)
+    {
+      if (manager.Value?.activePowerup?.name == name)
+      {
+        powerupCount++;
+      }
+    }
+
+    return powerupCount;
   }
 }

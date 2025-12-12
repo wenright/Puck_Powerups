@@ -16,7 +16,7 @@
 
   <Target Name="PostBuildMoveDllDedicated" AfterTargets="Build">
     <PropertyGroup>
-      <TargetDir>D:\SteamLibrary\steamapps\common\Puck Dedicated Server\Plugins\Powerups</TargetDir>
+      <TargetDir>C:\Program Files (x86)\Steam\steamapps\common\Puck Dedicated Server\Plugins\Powerups</TargetDir>
     </PropertyGroup>
 
     <MakeDir Directories="$(TargetDir)" />

@@ -75,7 +75,7 @@ public static class PlayerBodyV2_Patch
                 __instance.Rigidbody.linearVelocity = -directionFromPlayer * grappleSpeed;
 
                 // Grapple should end early if we reach the puck
-                if (Vector3.Distance(puck.transform.position, __instance.transform.position) < 1.5f)
+                if (Vector3.Distance(puck.transform.position, __instance.transform.position) < 2f)
                 {
                     powerupManager.End();
                 }
@@ -105,8 +105,9 @@ public static class PlayerBodyV2_Patch
             case PowerupNames.Rage:
                 component.OnSlip();
 
-                float knockbackPower = 6.0f;
+                float knockbackPower = 8.0f;
                 component.Rigidbody.AddForceAtPosition(-collision.relativeVelocity.normalized * knockbackPower, __instance.Rigidbody.worldCenterOfMass + __instance.transform.up * 0.5f, ForceMode.VelocityChange);
+				component.Rigidbody.AddForce(Vector3.up * 15.0f);
 
                 return Constants.SKIP;
             case PowerupNames.Glue:
