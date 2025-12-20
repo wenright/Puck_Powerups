@@ -69,7 +69,7 @@ public static class PlayerBodyV2_Patch
 
                 break;
             case PowerupNames.Grapple:
-                float grappleSpeed = 20.0f;
+                float grappleSpeed = 30.0f;
 
                 Vector3 directionFromPlayer = (__instance.transform.position - puck.transform.position).normalized;
                 __instance.Rigidbody.linearVelocity = -directionFromPlayer * grappleSpeed;
@@ -105,9 +105,9 @@ public static class PlayerBodyV2_Patch
             case PowerupNames.Rage:
                 component.OnSlip();
 
-                float knockbackPower = 8.0f;
+                float knockbackPower = 19.0f;
                 component.Rigidbody.AddForceAtPosition(-collision.relativeVelocity.normalized * knockbackPower, __instance.Rigidbody.worldCenterOfMass + __instance.transform.up * 0.5f, ForceMode.VelocityChange);
-				component.Rigidbody.AddForce(Vector3.up * 15.0f);
+				component.Rigidbody.AddForce(Vector3.up * 25.0f);
 
                 return Constants.SKIP;
             case PowerupNames.Glue:
