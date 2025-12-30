@@ -44,17 +44,16 @@ public static class PlayerBodyV2_Patch
         }
 
         Puck puck = PuckManager.Instance.GetPuck();
-        if (!puck) return;
-
         Vector3 bladePosition = __instance.Stick.BladeHandlePosition;
+        float puckDistance = puck ? Vector3.Distance(puck.transform.position, bladePosition) : float.MaxValue;
 
         switch (powerupManager.activePowerup.name)
         {
             case PowerupNames.Magnet:
+                if (!puck) return;
                 float magnetRange = 3.5f;
                 float magnetForce = 600.0f;
 
-                float puckDistance = Vector3.Distance(puck.transform.position, bladePosition);
                 if (puckDistance > magnetRange) return;
 
                 Vector3 puckDirection = (bladePosition - puck.transform.position).normalized;
@@ -62,6 +61,7 @@ public static class PlayerBodyV2_Patch
 
                 break;
             case PowerupNames.Lasso:
+                if (!puck) return;
                 float lassoForce = 900.0f;
 
                 puckDirection = (bladePosition - puck.transform.position).normalized;
@@ -69,6 +69,7 @@ public static class PlayerBodyV2_Patch
 
                 break;
             case PowerupNames.Grapple:
+                if (!puck) return;
                 float grappleSpeed = 20.0f;
 
                 Vector3 directionFromPlayer = (__instance.transform.position - puck.transform.position).normalized;
@@ -80,6 +81,140 @@ public static class PlayerBodyV2_Patch
                     powerupManager.End();
                 }
                 
+                break;
+            case PowerupNames.Tornado:
+                float tornadoRange = 8.0f;
+                float maxTornadoForce = 600.0f;
+                float radialForceMultiplier = 0.15f; // Reduced radial force to prevent overshooting
+                float circularForceMultiplier = 2.0f; // Increased circular force to maintain orbit
+                float baseUpwardForce = 900.0f; // Flat upward force amount (maxTornadoForce * 0.3)
+                float maxHeightAboveIce = 15.0f; // Height above ice where upward force starts falling off
+                float velocityDamping = 0.85f; // Stronger damping to reduce velocity buildup
+                float boundaryForceMultiplier = 7.5f; // Force multiplier for boundary restoration
+                float boundaryStartRatio = 0.4f; // Start applying boundary force at 70% of range
+                float playerForceMultiplier = 50.0f; // Force multiplier for players (10x stronger than puck)
+                Vector3 tornadoCenter = __instance.transform.position;
+                Vector3 up = Vector3.up;
+                float iceLevel = tornadoCenter.y; // Use tornado center Y as ice level reference
+
+                // Apply tornado force to the puck if it exists
+                if (puck)
+                {
+                    Vector3 toPuck = puck.transform.position - tornadoCenter;
+                    float puckTornadoDistance = toPuck.magnitude;
+                    if (puckTornadoDistance <= tornadoRange && puckTornadoDistance > 0.1f)
+                    {
+                        // Inverse square falloff: force = maxForce * (range² / distance²)
+                        float puckForceStrength = maxTornadoForce * (tornadoRange * tornadoRange) / (puckTornadoDistance * puckTornadoDistance);
+
+                        Vector3 puckRadialDirection = -toPuck.normalized;
+                        Vector3 puckRadialForce = puckRadialDirection * puckForceStrength * radialForceMultiplier * Time.fixedDeltaTime;
+
+                        // Reduce circular force near boundary to prevent escape
+                        float boundaryDistance = tornadoRange * boundaryStartRatio;
+                        float circularForceScale = 1.0f;
+                        if (puckTornadoDistance > boundaryDistance)
+                        {
+                            // Linearly reduce circular force from boundary to edge
+                            float boundaryRatio = (puckTornadoDistance - boundaryDistance) / (tornadoRange - boundaryDistance);
+                            circularForceScale = 1.0f - boundaryRatio;
+                        }
+
+                        Vector3 puckTangentialDirection = Vector3.Cross(puckRadialDirection, up).normalized;
+                        Vector3 puckCircularForce = puckTangentialDirection * puckForceStrength * circularForceMultiplier * circularForceScale * Time.fixedDeltaTime;
+
+                        // Upward force: flat amount that falls off when too far above ice
+                        float puckHeightAboveIce = puck.transform.position.y - iceLevel;
+                        float puckUpwardForceScale = 1.0f;
+                        if (puckHeightAboveIce > maxHeightAboveIce)
+                        {
+                            // Falloff when too high above ice
+                            float excessHeight = puckHeightAboveIce - maxHeightAboveIce;
+                            puckUpwardForceScale = Mathf.Max(0.0f, 1.0f - (excessHeight / maxHeightAboveIce));
+                        }
+                        Vector3 puckUpwardForce = up * baseUpwardForce * puckUpwardForceScale * Time.fixedDeltaTime;
+
+                        // Boundary restoration force - gets stronger as object approaches edge
+                        Vector3 puckBoundaryForce = Vector3.zero;
+                        if (puckTornadoDistance > boundaryDistance)
+                        {
+                            float boundaryRatio = (puckTornadoDistance - boundaryDistance) / (tornadoRange - boundaryDistance);
+                            float boundaryForceStrength = puckForceStrength * boundaryForceMultiplier * boundaryRatio;
+                            puckBoundaryForce = puckRadialDirection * boundaryForceStrength * Time.fixedDeltaTime;
+                        }
+
+                        // Apply velocity damping to reduce radial velocity component (prevents slingshotting)
+                        Vector3 puckVelocity = puck.Rigidbody.linearVelocity;
+                        Vector3 puckRadialVelocity = Vector3.Project(puckVelocity, puckRadialDirection);
+                        Vector3 puckTangentialVelocity = puckVelocity - puckRadialVelocity;
+                        // Damp the radial velocity more than tangential to maintain orbit
+                        puck.Rigidbody.linearVelocity = puckRadialVelocity * velocityDamping + puckTangentialVelocity;
+
+                        puck.Rigidbody.AddForce(puckRadialForce + puckCircularForce + puckUpwardForce + puckBoundaryForce);
+                    }
+                }
+
+                // Get all players and apply tornado force to nearby ones
+                PlayerBodyV2[] allPlayers = GameObject.FindObjectsByType<PlayerBodyV2>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                foreach (PlayerBodyV2 otherPlayer in allPlayers)
+                {
+                    // Skip the player who activated the tornado
+                    if (otherPlayer == __instance) continue;
+                    if (otherPlayer.Player == null) continue;
+
+                    Vector3 toOtherPlayer = otherPlayer.transform.position - tornadoCenter;
+                    float distance = toOtherPlayer.magnitude;
+
+                    // Only affect players within range
+                    if (distance > tornadoRange) continue;
+                    if (distance < 0.1f) continue; // Avoid division by zero
+
+                    // Inverse square falloff: force = maxForce * (range² / distance²)
+                    float forceStrength = maxTornadoForce * (tornadoRange * tornadoRange) / (distance * distance);
+
+                    // Radial force (pulling toward center)
+                    Vector3 radialDirection = -toOtherPlayer.normalized;
+                    Vector3 radialForce = radialDirection * forceStrength * radialForceMultiplier * playerForceMultiplier * Time.fixedDeltaTime;
+
+                    // Reduce circular force near boundary to prevent escape
+                    float boundaryDistance = tornadoRange * boundaryStartRatio;
+                    float circularForceScale = 1.0f;
+                    if (distance > boundaryDistance)
+                    {
+                        // Linearly reduce circular force from boundary to edge
+                        float boundaryRatio = (distance - boundaryDistance) / (tornadoRange - boundaryDistance);
+                        circularForceScale = 1.0f - boundaryRatio;
+                    }
+
+                    // Circular force (tangential, perpendicular to radial)
+                    // Use cross product with up vector to get tangential direction
+                    Vector3 tangentialDirection = Vector3.Cross(radialDirection, up).normalized;
+                    Vector3 circularForce = tangentialDirection * forceStrength * circularForceMultiplier * circularForceScale * playerForceMultiplier * Time.fixedDeltaTime;
+
+                    // Upward force: flat amount that falls off when too far above ice
+                    float playerHeightAboveIce = otherPlayer.transform.position.y - iceLevel;
+                    float upwardForceScale = 1.0f;
+                    if (playerHeightAboveIce > maxHeightAboveIce)
+                    {
+                        // Falloff when too high above ice
+                        float excessHeight = playerHeightAboveIce - maxHeightAboveIce;
+                        upwardForceScale = Mathf.Max(0.0f, 1.0f - (excessHeight / maxHeightAboveIce));
+                    }
+                    Vector3 upwardForce = up * baseUpwardForce * upwardForceScale * playerForceMultiplier * Time.fixedDeltaTime;
+
+                    // Boundary restoration force - gets stronger as object approaches edge
+                    Vector3 boundaryForce = Vector3.zero;
+                    if (distance > boundaryDistance)
+                    {
+                        float boundaryRatio = (distance - boundaryDistance) / (tornadoRange - boundaryDistance);
+                        float boundaryForceStrength = forceStrength * boundaryForceMultiplier * boundaryRatio;
+                        boundaryForce = 5 * radialDirection * boundaryForceStrength * playerForceMultiplier * Time.fixedDeltaTime;
+                    }
+
+                    // Apply all forces
+                    otherPlayer.Rigidbody.AddForce(radialForce + circularForce + upwardForce + boundaryForce);
+                }
+
                 break;
         }
     }
