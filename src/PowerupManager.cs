@@ -44,16 +44,16 @@ public class PowerupManager
           puck.Rigidbody.linearVelocity /= 2;
 
         break;
-      case PowerupNames.Punch:
-        float punchPower = 27.0f;
+      // case PowerupNames.Punch:
+      //   float punchPower = 27.0f;
         
-        puck = PuckManager.Instance.GetPuck();
-        if (puck)
-          puck.Rigidbody.linearVelocity = (puck.transform.position - player.PlayerBody.transform.position).normalized * punchPower;
+      //   puck = PuckManager.Instance.GetPuck();
+      //   if (puck)
+      //     puck.Rigidbody.linearVelocity = (puck.transform.position - player.PlayerBody.transform.position).normalized * punchPower;
 
-        break;
+      //   break;
       case PowerupNames.Kick:
-        float kickPower = 13.5f;
+        float kickPower = 18.5f;
       
         PlayerTeam enemyTeam = player.Team.Value == PlayerTeam.Blue ? PlayerTeam.Red : PlayerTeam.Blue;
         List<Player> enemies = PlayerManager.Instance.GetPlayersByTeam(enemyTeam);

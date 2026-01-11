@@ -135,7 +135,7 @@ public static class PlayerBodyV2_Patch
             case PowerupNames.Magnet:
                 if (!puck) return;
                 float magnetRange = 3.5f;
-                float magnetForce = 600.0f;
+                float magnetForce = 700.0f;
 
                 if (puckDistance > magnetRange) return;
 
@@ -145,7 +145,7 @@ public static class PlayerBodyV2_Patch
                 break;
             case PowerupNames.Lasso:
                 if (!puck) return;
-                float lassoForce = 900.0f;
+                float lassoForce = 1300.0f;
 
                 puckDirection = (bladePosition - puck.transform.position).normalized;
                 puck.Rigidbody.AddForce(puckDirection * lassoForce * Time.fixedDeltaTime);
@@ -153,7 +153,7 @@ public static class PlayerBodyV2_Patch
                 break;
             case PowerupNames.Grapple:
                 if (!puck) return;
-                float grappleSpeed = 20.0f;
+                float grappleSpeed = 33.0f;
 
                 Vector3 directionFromPlayer = (__instance.transform.position - puck.transform.position).normalized;
                 __instance.Rigidbody.linearVelocity = -directionFromPlayer * grappleSpeed;
@@ -214,7 +214,7 @@ public static class PlayerBodyV2_Patch
             case PowerupNames.Rage:
                 component.OnSlip();
 
-                float knockbackPower = 8.0f;
+                float knockbackPower = 14.0f;
                 component.Rigidbody.AddForceAtPosition(-collision.relativeVelocity.normalized * knockbackPower, __instance.Rigidbody.worldCenterOfMass + __instance.transform.up * 0.5f, ForceMode.VelocityChange);
 				component.Rigidbody.AddForce(Vector3.up * 15.0f);
 
