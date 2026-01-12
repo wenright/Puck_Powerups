@@ -38,20 +38,6 @@ public class PowerupManager
     // Special actions that happen when powerup is activated. Per-frame actions happen in PlayerBodyV2Patch
     switch (activePowerup.name)
     {
-      case PowerupNames.Lasso:
-        Puck puck = PuckManager.Instance.GetPuck();
-        if (puck)
-          puck.Rigidbody.linearVelocity /= 2;
-
-        break;
-      // case PowerupNames.Punch:
-      //   float punchPower = 27.0f;
-        
-      //   puck = PuckManager.Instance.GetPuck();
-      //   if (puck)
-      //     puck.Rigidbody.linearVelocity = (puck.transform.position - player.PlayerBody.transform.position).normalized * punchPower;
-
-      //   break;
       case PowerupNames.Kick:
         float kickPower = 18.5f;
       

@@ -143,14 +143,6 @@ public static class PlayerBodyV2_Patch
                 puck.Rigidbody.AddForce(puckDirection * magnetForce * Time.fixedDeltaTime);
 
                 break;
-            case PowerupNames.Lasso:
-                if (!puck) return;
-                float lassoForce = 1300.0f;
-
-                puckDirection = (bladePosition - puck.transform.position).normalized;
-                puck.Rigidbody.AddForce(puckDirection * lassoForce * Time.fixedDeltaTime);
-
-                break;
             case PowerupNames.Grapple:
                 if (!puck) return;
                 float grappleSpeed = 33.0f;
