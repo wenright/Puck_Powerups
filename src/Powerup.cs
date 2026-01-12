@@ -20,7 +20,6 @@ public class Powerup
 public static class PowerupNames {
   public const string Magnet = "Magnet";
   public const string Rage = "Rage";
-  public const string Lasso = "Lasso";
   public const string Grapple = "Grapple";
   public const string Glue = "Glue";
   public const string Kick = "Kick";
