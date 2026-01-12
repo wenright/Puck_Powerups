@@ -27,6 +27,7 @@ public static class PowerupNames {
   public const string LowGrav = "LowGrav";
   public const string Tornado = "Tornado";
   public const string Jetpack = "Jetpack";
+  public const string Turbo = "Turbo";
 }
 
 public static class PowerupList
@@ -38,8 +39,10 @@ public static class PowerupList
     [PowerupNames.Grapple] = new Powerup(PowerupNames.Grapple, 7.0f, "teal"),
     [PowerupNames.Glue] = new Powerup(PowerupNames.Glue, 7.5f, "yellow"),
     [PowerupNames.Kick] = new Powerup(PowerupNames.Kick, 0.5f, "lightblue"),
-    [PowerupNames.LowGrav] = new Powerup(PowerupNames.LowGrav, 5.0f, "green"),
     [PowerupNames.Tornado] = new Powerup(PowerupNames.Tornado, 6.0f, "red"),
     [PowerupNames.Jetpack] = new Powerup(PowerupNames.Jetpack, 5.0f, "cyan"),
+    [PowerupNames.LowGrav] = new Powerup(PowerupNames.LowGrav, 7.0f, "green"),
+    [PowerupNames.Jetpack] = new Powerup(PowerupNames.Jetpack, 3.5f, "cyan"),
+    [PowerupNames.Turbo] = new Powerup(PowerupNames.Turbo, 7.0f, "orange"),
   };
 }

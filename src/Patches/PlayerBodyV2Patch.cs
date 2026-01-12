@@ -108,7 +108,6 @@ public static class PlayerBodyV2_Patch
     public static void Patch_PlayerBodyV2_FixedUpdate(PlayerBodyV2 __instance)
     {
         if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
-        if (GameManager.Instance.Phase != GamePhase.Playing) return;
         if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return;
 
         if (powerupManager.availablePowerup == null && powerupManager.CanUse())
@@ -182,6 +181,21 @@ public static class PlayerBodyV2_Patch
                 }
 
                 break;
+            case PowerupNames.Jetpack:
+                float jetpackStrength = 3000.0f;
+            
+                __instance.Rigidbody.AddForce(__instance.transform.up * jetpackStrength);
+            
+                break;
+            case PowerupNames.Turbo:
+                float turboStrength = 1500.0f;
+
+                if (__instance.IsSprinting.Value)
+                {
+                    __instance.Rigidbody.AddForce(__instance.transform.forward * turboStrength);
+                }
+
+                break;
         }
     }
 
@@ -204,9 +218,9 @@ public static class PlayerBodyV2_Patch
         switch (powerupManager.activePowerup.name)
         {
             case PowerupNames.Rage:
-                component.OnSlip();
+                float knockbackPower = 17.0f;
 
-                float knockbackPower = 14.0f;
+                component.OnSlip();
                 component.Rigidbody.AddForceAtPosition(-collision.relativeVelocity.normalized * knockbackPower, __instance.Rigidbody.worldCenterOfMass + __instance.transform.up * 0.5f, ForceMode.VelocityChange);
 				component.Rigidbody.AddForce(Vector3.up * 15.0f);
 
