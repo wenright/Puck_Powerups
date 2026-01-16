@@ -38,10 +38,9 @@ public static class PowerupList
     [PowerupNames.Grapple] = new Powerup(PowerupNames.Grapple, 7.0f, "teal"),
     [PowerupNames.Glue] = new Powerup(PowerupNames.Glue, 7.5f, "yellow"),
     [PowerupNames.Kick] = new Powerup(PowerupNames.Kick, 0.5f, "lightblue"),
-    [PowerupNames.Tornado] = new Powerup(PowerupNames.Tornado, 6.0f, "red"),
-    [PowerupNames.Jetpack] = new Powerup(PowerupNames.Jetpack, 5.0f, "cyan"),
+    [PowerupNames.Tornado] = new Powerup(PowerupNames.Tornado, 5.0f, "olive"),
+    [PowerupNames.Jetpack] = new Powerup(PowerupNames.Jetpack, 6.0f, "cyan"),
     [PowerupNames.LowGrav] = new Powerup(PowerupNames.LowGrav, 7.0f, "green"),
-    [PowerupNames.Jetpack] = new Powerup(PowerupNames.Jetpack, 3.5f, "cyan"),
     [PowerupNames.Turbo] = new Powerup(PowerupNames.Turbo, 7.0f, "orange"),
   };
 }

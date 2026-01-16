@@ -182,9 +182,12 @@ public static class PlayerBodyV2_Patch
 
                 break;
             case PowerupNames.Jetpack:
-                float jetpackStrength = 3000.0f;
-            
-                __instance.Rigidbody.AddForce(__instance.transform.up * jetpackStrength);
+                float jetpackStrength = 3200.0f;
+
+                if (__instance.Movement.MoveForwards)
+                {
+                    __instance.Rigidbody.AddForce(__instance.transform.up * jetpackStrength);
+                }
             
                 break;
             case PowerupNames.Turbo:
