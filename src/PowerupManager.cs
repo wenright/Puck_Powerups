@@ -58,6 +58,16 @@ public class PowerupManager
         SetGravity(false);
 
         break;
+      case PowerupNames.Backflip:
+        float upwardsForce = 44000;
+        float flipTorque = 36500;
+        
+        player.PlayerBody.Rigidbody.AddForce(Vector3.up * upwardsForce);
+        player.PlayerBody.Rigidbody.AddTorque(-player.PlayerBody.transform.right * flipTorque);
+
+        nextPowerupAvailableAt = Time.time + 2.0f;
+        
+        break;
     }
 
     return activePowerup;
