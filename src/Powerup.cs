@@ -15,6 +15,12 @@ public class Powerup
     this.duration = duration;
     this.color = color;
   }
+
+  public static float GetCooldown()
+  {
+    int playerCount = PlayerManager.Instance.GetPlayers().Count;
+    return 4 + playerCount * 2;
+  }
 }
 
 public static class PowerupNames {

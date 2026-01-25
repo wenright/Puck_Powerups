@@ -17,7 +17,7 @@ public class PowerupManager
     this.player = player;
 
     lastUsedAt = Time.time;
-    nextPowerupAvailableAt = Time.time + Powerup.cooldown;
+    nextPowerupAvailableAt = Time.time + Powerup.GetCooldown();
   }
 
   public bool CanUse()
@@ -33,7 +33,7 @@ public class PowerupManager
 
     activePowerup = availablePowerup;
     availablePowerup = null;
-    nextPowerupAvailableAt = Time.time + Powerup.cooldown + activePowerup.duration;
+    nextPowerupAvailableAt = Time.time + Powerup.GetCooldown() + activePowerup.duration;
 
     // Special actions that happen when powerup is activated. Per-frame actions happen in PlayerBodyV2Patch
     switch (activePowerup.name)
