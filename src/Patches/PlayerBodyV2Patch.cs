@@ -101,7 +101,7 @@ public static class PlayerBodyV2_Patch
             case PowerupNames.Jetpack:
                 float jetpackStrength = 3200.0f;
 
-                if (__instance.Movement.MoveForwards)
+                if (__instance.Movement.MoveForwards && !__instance.IsGrounded)
                 {
                     __instance.Rigidbody.AddForce(__instance.transform.up * jetpackStrength);
                 }

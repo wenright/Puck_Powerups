@@ -13,6 +13,7 @@ public static class UIChatPatch
   {
     if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost))
       return Constants.CONTINUE;
+      
     if (message != ___quickChatMessages[0][0] && message != ___quickChatMessages[0][1])
       return Constants.CONTINUE;
     
