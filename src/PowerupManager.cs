@@ -68,6 +68,10 @@ public class PowerupManager
         nextPowerupAvailableAt = Time.time + 3.0f;
         
         break;
+      case PowerupNames.Slowmo:
+        Time.timeScale = 0.5f;
+      
+        break;
     }
 
     return activePowerup;
@@ -88,7 +92,12 @@ public class PowerupManager
     {
       SetGravity(true);
     }
-    
+
+    if (CountActivePowerupByName(PowerupNames.Slowmo) <= 1)
+    {
+      Time.timeScale = 1f;
+    }
+
     if (activePowerup.duration > 2.0f) {
       UIChat.Instance.Server_ChatMessageRpc($"<b><color={activePowerup.color}>{activePowerup.name}</color></b> ended", UIChat.Instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
     }
