@@ -1,4 +1,6 @@
 using AYellowpaper.SerializedCollections;
+using System.Collections;
+using System.Linq;
 using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
@@ -27,6 +29,8 @@ public static class UIChatPatch
     
     if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(player, out PowerupManager powerupManager)) return Constants.CONTINUE;
 
+    ResetRpcExecStage(__instance);
+
     float msRemaining = powerupManager.nextPowerupAvailableAt - Time.time;
     string formattedMsRemaining = msRemaining.ToString("0.0");
 
@@ -47,7 +51,7 @@ public static class UIChatPatch
 
     Powerup powerupUsed = powerupManager.UsePowerup();
 
-    Broadcast($"{player.Username.Value} used <b><color={powerupUsed.color}>{powerupUsed.name}</color></b>");
+    BroadcastNextFrame($"{player.Username.Value} used <b><color={powerupUsed.color}>{powerupUsed.name}</color></b>");
 
     return Constants.SKIP;
   }
@@ -59,6 +63,25 @@ public static class UIChatPatch
 
   public static void Broadcast(string message)
   {
-    ChatManager.Instance.Server_BroadcastChatMessage(message);
+    ulong[] clientIds = PlayerManager.Instance.GetPlayers(false).Select(player => player.OwnerClientId).ToArray();
+    ChatManager.Instance.Server_SendChatMessageToClients(message, clientIds);
+  }
+
+  public static void BroadcastNextFrame(string message)
+  {
+    ChatManager.Instance.StartCoroutine(BroadcastNextFrameCoroutine(message));
+  }
+
+  private static IEnumerator BroadcastNextFrameCoroutine(string message)
+  {
+    yield return null;
+    Broadcast(message);
+  }
+
+  private static void ResetRpcExecStage(ChatManager chatManager)
+  {
+    var rpcExecStageField = AccessTools.Field(typeof(NetworkBehaviour), "__rpc_exec_stage");
+    object noneValue = System.Enum.ToObject(rpcExecStageField.FieldType, 0);
+    rpcExecStageField.SetValue(chatManager, noneValue);
   }
 }
