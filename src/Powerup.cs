@@ -51,6 +51,6 @@ public static class PowerupList
     [PowerupNames.LowGrav] = new Powerup(PowerupNames.LowGrav, 7.0f, "green"),
     [PowerupNames.Turbo] = new Powerup(PowerupNames.Turbo, 7.0f, "orange"),
     [PowerupNames.Backflip] = new Powerup(PowerupNames.Backflip, 2.0f, "black"),
-    [PowerupNames.Slowmo] = new Powerup(PowerupNames.Slowmo, 4.0f, "brown"),
+    [PowerupNames.Slowmo] = new Powerup(PowerupNames.Slowmo, 3.25f, "brown"),
   };
 }

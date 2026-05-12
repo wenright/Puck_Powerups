@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Powerups;
 
-[HarmonyPatch(typeof(PlayerBodyV2))]
+[HarmonyPatch(typeof(PlayerBody))]
 public static class PlayerBodyV2_Patch
 {
     public static Dictionary<Player, PowerupManager> powerupManagers = new Dictionary<Player, PowerupManager>();
@@ -14,7 +14,7 @@ public static class PlayerBodyV2_Patch
 
     [HarmonyPostfix]
     [HarmonyPatch("OnNetworkPostSpawn")]
-    public static void Patch_PlayerBodyV2_OnNetworkPostSpawn(PlayerBodyV2 __instance)
+    public static void Patch_PlayerBodyV2_OnNetworkPostSpawn(PlayerBody __instance)
     {
         if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
         powerupManagers[__instance.Player] = new PowerupManager(__instance.Player);
@@ -22,7 +22,7 @@ public static class PlayerBodyV2_Patch
 
     [HarmonyPostfix]
     [HarmonyPatch("FixedUpdate")]
-    public static void Patch_PlayerBodyV2_FixedUpdate(PlayerBodyV2 __instance)
+    public static void Patch_PlayerBodyV2_FixedUpdate(PlayerBody __instance)
     {
         if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
         if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return;
@@ -30,7 +30,7 @@ public static class PlayerBodyV2_Patch
         if (powerupManager.availablePowerup == null && powerupManager.CanUse())
         {
             Powerup nextPowerup = powerupManager.GenerateNextPowerup();
-            UIChat.Instance.Server_ChatMessageRpc($"<b><color={nextPowerup.color}>{nextPowerup.name}</color></b> is ready to use", UIChat.Instance.RpcTarget.Group(new[] { __instance.Player.OwnerClientId }, RpcTargetUse.Temp));
+            UIChatPatch.SendToPlayer($"<b><color={nextPowerup.color}>{nextPowerup.name}</color></b> is ready to use", __instance.Player);
         }
 
         if (powerupManager.activePowerup == null) return;
@@ -87,8 +87,8 @@ public static class PlayerBodyV2_Patch
                 }
 
                 // Get all players and apply tornado force to nearby ones
-                PlayerBodyV2[] allPlayers = GameObject.FindObjectsByType<PlayerBodyV2>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-                foreach (PlayerBodyV2 otherPlayer in allPlayers)
+                PlayerBody[] allPlayers = GameObject.FindObjectsByType<PlayerBody>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                foreach (PlayerBody otherPlayer in allPlayers)
                 {
                     // Skip the player who activated the tornado
                     if (otherPlayer == __instance) continue;
@@ -123,13 +123,13 @@ public static class PlayerBodyV2_Patch
     // Handles Rage powerup, and ending glue on collisions
     [HarmonyPrefix]
     [HarmonyPatch("OnCollisionEnter")]
-    public static bool Patch_OnCollisionEnter(Collision collision, PlayerBodyV2 __instance)
+    public static bool Patch_OnCollisionEnter(Collision collision, PlayerBody __instance)
     {
         if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return Constants.CONTINUE;
         if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return Constants.CONTINUE;
         if (powerupManager.activePowerup == null) return Constants.CONTINUE;
 
-        PlayerBodyV2 component = collision.gameObject.GetComponent<PlayerBodyV2>();
+        PlayerBody component = collision.gameObject.GetComponent<PlayerBody>();
         if (!component)
         {
             return Constants.CONTINUE;

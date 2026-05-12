@@ -41,13 +41,13 @@ public class PowerupManager
       case PowerupNames.Kick:
         float kickPower = 18.5f;
       
-        PlayerTeam enemyTeam = player.Team.Value == PlayerTeam.Blue ? PlayerTeam.Red : PlayerTeam.Blue;
+        PlayerTeam enemyTeam = player.Team == PlayerTeam.Blue ? PlayerTeam.Red : PlayerTeam.Blue;
         List<Player> enemies = PlayerManager.Instance.GetPlayersByTeam(enemyTeam);
         if (enemies.Count == 0) break;
 
         enemies.Sort((e1, e2) => Mathf.RoundToInt((Vector3.Distance(player.PlayerBody.transform.position, e1.PlayerBody.transform.position) - Vector3.Distance(player.PlayerBody.transform.position, e2.PlayerBody.transform.position)) * 100));
         Player enemy = enemies[0];
-        PlayerBodyV2 enemyBody = enemy.GetComponentInChildren<PlayerBodyV2>();
+        PlayerBody enemyBody = enemy.GetComponentInChildren<PlayerBody>();
         if (enemyBody == null) break;
 
         enemyBody.OnSlip();
@@ -99,7 +99,7 @@ public class PowerupManager
     }
 
     if (activePowerup.duration > 2.0f) {
-      UIChat.Instance.Server_ChatMessageRpc($"<b><color={activePowerup.color}>{activePowerup.name}</color></b> ended", UIChat.Instance.RpcTarget.Group(new[] { player.OwnerClientId }, RpcTargetUse.Temp));
+      UIChatPatch.SendToPlayer($"<b><color={activePowerup.color}>{activePowerup.name}</color></b> ended", player);
     }
     activePowerup = null;
   }
@@ -112,8 +112,8 @@ public class PowerupManager
       puck.Rigidbody.useGravity = enabled;
     }
 
-    PlayerBodyV2[] players = GameObject.FindObjectsByType<PlayerBodyV2>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
-    foreach (PlayerBodyV2 player in players)
+    PlayerBody[] players = GameObject.FindObjectsByType<PlayerBody>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+    foreach (PlayerBody player in players)
     {
       player.Rigidbody.useGravity = enabled;
     }

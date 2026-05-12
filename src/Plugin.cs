@@ -10,7 +10,7 @@ public class Constants
   public const bool CONTINUE = true;
 }
 
-public class Plugin : IPuckMod
+public class Plugin : IPuckPlugin
 {
   public static string MOD_NAME = "Powerups";
   public static string MOD_VERSION = "0.7.0";
