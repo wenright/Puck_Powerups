@@ -21,7 +21,9 @@ public static class Puck_Patch
 
     Stick stick = collision.gameObject.GetComponent<Stick>();
     if (!stick) return;
-    if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(stick.Player, out PowerupManager powerupManager)) return;
+    Player player = StickCompatibility.GetPlayer(stick);
+    if (!player) return;
+    if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(player, out PowerupManager powerupManager)) return;
     if (powerupManager.activePowerup == null || powerupManager.activePowerup.name != PowerupNames.Glue) return;
 
     float glueDurationSeconds = 1.75f;
@@ -40,7 +42,9 @@ public static class Puck_Patch
   {
     if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
     if (!glueTarget) return;
-    if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(glueTarget.Player, out PowerupManager powerupManager)) return;
+    Player player = StickCompatibility.GetPlayer(glueTarget);
+    if (!player) return;
+    if (!PlayerBodyV2_Patch.powerupManagers.TryGetValue(player, out PowerupManager powerupManager)) return;
     if (powerupManager == null) return;
 
     if (powerupManager.activePowerup == null || powerupManager.activePowerup.name != PowerupNames.Glue)

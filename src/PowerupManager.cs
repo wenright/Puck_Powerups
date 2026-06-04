@@ -39,35 +39,54 @@ public class PowerupManager
     switch (activePowerup.name)
     {
       case PowerupNames.Kick:
+      {
         float kickPower = 18.5f;
+        PlayerBody playerBody = StickCompatibility.GetPlayerBody(player);
+        if (!playerBody) break;
       
         PlayerTeam enemyTeam = player.Team == PlayerTeam.Blue ? PlayerTeam.Red : PlayerTeam.Blue;
         List<Player> enemies = PlayerManager.Instance.GetPlayersByTeam(enemyTeam);
         if (enemies.Count == 0) break;
 
-        enemies.Sort((e1, e2) => Mathf.RoundToInt((Vector3.Distance(player.PlayerBody.transform.position, e1.PlayerBody.transform.position) - Vector3.Distance(player.PlayerBody.transform.position, e2.PlayerBody.transform.position)) * 100));
-        Player enemy = enemies[0];
-        PlayerBody enemyBody = enemy.GetComponentInChildren<PlayerBody>();
-        if (enemyBody == null) break;
+        PlayerBody enemyBody = null;
+        float closestEnemyDistance = float.MaxValue;
+        foreach (Player enemy in enemies)
+        {
+          PlayerBody candidateBody = StickCompatibility.GetPlayerBody(enemy);
+          if (!candidateBody) candidateBody = enemy.GetComponentInChildren<PlayerBody>();
+          if (!candidateBody) continue;
+
+          float enemyDistance = Vector3.Distance(playerBody.transform.position, candidateBody.transform.position);
+          if (enemyDistance >= closestEnemyDistance) continue;
+
+          enemyBody = candidateBody;
+          closestEnemyDistance = enemyDistance;
+        }
+        if (!enemyBody) break;
 
         enemyBody.OnSlip();
-        enemyBody.Rigidbody.AddForceAtPosition((enemyBody.transform.position - player.PlayerBody.transform.position).normalized * kickPower, player.PlayerBody.Rigidbody.worldCenterOfMass + player.PlayerBody.transform.up * 0.5f, ForceMode.VelocityChange);
+        enemyBody.Rigidbody.AddForceAtPosition((enemyBody.transform.position - playerBody.transform.position).normalized * kickPower, playerBody.Rigidbody.worldCenterOfMass + playerBody.transform.up * 0.5f, ForceMode.VelocityChange);
       
         break;
+      }
       case PowerupNames.LowGrav:
         SetGravity(false);
 
         break;
       case PowerupNames.Backflip:
+      {
         float upwardsForce = 44000;
         float flipTorque = 37500;
+        PlayerBody playerBody = StickCompatibility.GetPlayerBody(player);
+        if (!playerBody) break;
         
-        player.PlayerBody.Rigidbody.AddForce(Vector3.up * upwardsForce);
-        player.PlayerBody.Rigidbody.AddTorque(-player.PlayerBody.transform.right * flipTorque);
+        playerBody.Rigidbody.AddForce(Vector3.up * upwardsForce);
+        playerBody.Rigidbody.AddTorque(-playerBody.transform.right * flipTorque);
 
         nextPowerupAvailableAt = Time.time + 3.0f;
         
         break;
+      }
       case PowerupNames.Slowmo:
         Time.timeScale = 0.5f;
       

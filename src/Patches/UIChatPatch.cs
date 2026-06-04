@@ -1,6 +1,8 @@
 using AYellowpaper.SerializedCollections;
+using System;
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using HarmonyLib;
 using Unity.Netcode;
 using UnityEngine;
@@ -10,6 +12,11 @@ namespace Powerups;
 [HarmonyPatch(typeof(ChatManager), "Client_SendChatMessageRpc")]
 public static class UIChatPatch
 {
+  private static readonly MethodInfo SendChatMessage = AccessTools.Method(typeof(ChatManager), "Server_SendChatMessage", new[] { typeof(string), typeof(string), typeof(ulong[]) });
+  private static readonly MethodInfo SendChatMessageToClients = AccessTools.Method(typeof(ChatManager), "Server_SendChatMessageToClients", new[] { typeof(string), typeof(ulong[]) });
+  private static readonly MethodInfo BroadcastChatMessage = AccessTools.Method(typeof(ChatManager), "Server_BroadcastChatMessage", new[] { typeof(string), typeof(string) });
+  private static readonly MethodInfo BroadcastChatMessageLegacy = AccessTools.Method(typeof(ChatManager), "Server_BroadcastChatMessage", new[] { typeof(string) });
+
   [HarmonyPrefix]
   public static bool Patch_UIChat_Server_ProcessPlayerChatMessage(string content, bool isQuickChat, RpcParams rpcParams, SerializedDictionary<QuickChatCategory, QuickChat[]> ___quickChats, ChatManager __instance)
   {
@@ -58,13 +65,19 @@ public static class UIChatPatch
 
   public static void SendToPlayer(string message, Player player)
   {
-    ChatManager.Instance.Server_SendChatMessageToClients(message, new[] { player.OwnerClientId });
+    SendToClients(message, new[] { player.OwnerClientId });
   }
 
   public static void Broadcast(string message)
   {
+    ChatManager chatManager = ChatManager.Instance;
+    if (!chatManager) return;
+
+    if (TryInvoke(BroadcastChatMessage, chatManager, message, null)) return;
+    if (TryInvoke(BroadcastChatMessageLegacy, chatManager, message)) return;
+
     ulong[] clientIds = PlayerManager.Instance.GetPlayers(false).Select(player => player.OwnerClientId).ToArray();
-    ChatManager.Instance.Server_SendChatMessageToClients(message, clientIds);
+    SendToClients(message, clientIds);
   }
 
   public static void BroadcastNextFrame(string message)
@@ -83,5 +96,35 @@ public static class UIChatPatch
     var rpcExecStageField = AccessTools.Field(typeof(NetworkBehaviour), "__rpc_exec_stage");
     object noneValue = System.Enum.ToObject(rpcExecStageField.FieldType, 0);
     rpcExecStageField.SetValue(chatManager, noneValue);
+  }
+
+  private static void SendToClients(string message, ulong[] clientIds)
+  {
+    ChatManager chatManager = ChatManager.Instance;
+    if (!chatManager) return;
+
+    if (TryInvoke(SendChatMessage, chatManager, message, null, clientIds)) return;
+    if (TryInvoke(SendChatMessageToClients, chatManager, message, clientIds)) return;
+
+    Debug.LogWarning("Powerups could not find a compatible ChatManager server-send method.");
+  }
+
+  private static bool TryInvoke(MethodInfo method, object instance, params object[] parameters)
+  {
+    if (method == null || instance == null) return false;
+
+    try
+    {
+      method.Invoke(instance, parameters);
+      return true;
+    }
+    catch (MissingMemberException)
+    {
+      return false;
+    }
+    catch (TargetInvocationException exception) when (exception.InnerException is MissingMemberException)
+    {
+      return false;
+    }
   }
 }

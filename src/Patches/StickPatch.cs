@@ -1,4 +1,5 @@
 using HarmonyLib;
+using Powerups;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -32,10 +33,13 @@ public class StickPhysicsFix
         float ___bladeHandleDerivativeGain,
         float ___bladeHandleDerivativeSmoothing)
     {
-        if (!__instance.Player || !__instance.StickPositioner)
+        Player player = StickCompatibility.GetPlayer(__instance);
+        PlayerBody playerBody = StickCompatibility.GetPlayerBody(__instance);
+
+        if (!player || !playerBody || !__instance.StickPositioner)
             return false;
             
-        var playerInput = __instance.Player.PlayerInput;
+        var playerInput = player.PlayerInput;
         if (!playerInput)
             return false;
 
@@ -68,8 +72,8 @@ public class StickPhysicsFix
             __instance.BladeHandlePosition, 
             __instance.StickPositioner.BladeTargetPosition);
 
-        Vector3 shaftPointVelocity = __instance.PlayerBody.Rigidbody.GetPointVelocity(___shaftHandle.transform.position);
-        Vector3 bladePointVelocity = __instance.PlayerBody.Rigidbody.GetPointVelocity(___bladeHandle.transform.position);
+        Vector3 shaftPointVelocity = playerBody.Rigidbody.GetPointVelocity(___shaftHandle.transform.position);
+        Vector3 bladePointVelocity = playerBody.Rigidbody.GetPointVelocity(___bladeHandle.transform.position);
         
         float maxPointVelocity = 100f;
         shaftPointVelocity = Vector3.ClampMagnitude(shaftPointVelocity, maxPointVelocity);
@@ -116,7 +120,7 @@ public class StickPhysicsFix
             new Vector3(0.5f, 1f, 0.0f)) * ___angularVelocityTransferMultiplier;
 
         if (___transferAngularVelocity)
-            __instance.PlayerBody.Rigidbody.AddTorque(-angularVelocityTransfer, ForceMode.Acceleration);
+            playerBody.Rigidbody.AddTorque(-angularVelocityTransfer, ForceMode.Acceleration);
 
         ___bladeHandleProportionalGainMultiplier = 1f;
 

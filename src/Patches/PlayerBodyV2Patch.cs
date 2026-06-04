@@ -17,7 +17,9 @@ public static class PlayerBodyV2_Patch
     public static void Patch_PlayerBodyV2_OnNetworkPostSpawn(PlayerBody __instance)
     {
         if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
-        powerupManagers[__instance.Player] = new PowerupManager(__instance.Player);
+        Player player = StickCompatibility.GetPlayer(__instance);
+        if (!player) return;
+        powerupManagers[player] = new PowerupManager(player);
     }
 
     [HarmonyPostfix]
@@ -25,12 +27,14 @@ public static class PlayerBodyV2_Patch
     public static void Patch_PlayerBodyV2_FixedUpdate(PlayerBody __instance)
     {
         if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
-        if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return;
+        Player player = StickCompatibility.GetPlayer(__instance);
+        if (!player) return;
+        if (!powerupManagers.TryGetValue(player, out PowerupManager powerupManager)) return;
 
         if (powerupManager.availablePowerup == null && powerupManager.CanUse())
         {
             Powerup nextPowerup = powerupManager.GenerateNextPowerup();
-            UIChatPatch.SendToPlayer($"<b><color={nextPowerup.color}>{nextPowerup.name}</color></b> is ready to use", __instance.Player);
+            UIChatPatch.SendToPlayer($"<b><color={nextPowerup.color}>{nextPowerup.name}</color></b> is ready to use", player);
         }
 
         if (powerupManager.activePowerup == null) return;
@@ -92,7 +96,7 @@ public static class PlayerBodyV2_Patch
                 {
                     // Skip the player who activated the tornado
                     if (otherPlayer == __instance) continue;
-                    if (otherPlayer.Player == null) continue;
+                    if (!StickCompatibility.GetPlayer(otherPlayer)) continue;
 
                     ApplyTornadoForce(otherPlayer.Rigidbody, otherPlayer.transform.position, tornadoCenter, iceLevel, playerForceMultiplier, tornadoRange, maxTornadoForce);
                 }
@@ -126,7 +130,9 @@ public static class PlayerBodyV2_Patch
     public static bool Patch_OnCollisionEnter(Collision collision, PlayerBody __instance)
     {
         if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return Constants.CONTINUE;
-        if (!powerupManagers.TryGetValue(__instance.Player, out PowerupManager powerupManager)) return Constants.CONTINUE;
+        Player player = StickCompatibility.GetPlayer(__instance);
+        if (!player) return Constants.CONTINUE;
+        if (!powerupManagers.TryGetValue(player, out PowerupManager powerupManager)) return Constants.CONTINUE;
         if (powerupManager.activePowerup == null) return Constants.CONTINUE;
 
         PlayerBody component = collision.gameObject.GetComponent<PlayerBody>();
