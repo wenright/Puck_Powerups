@@ -16,9 +16,15 @@ public static class PlayerBodyV2_Patch
     [HarmonyPatch("OnNetworkPostSpawn")]
     public static void Patch_PlayerBodyV2_OnNetworkPostSpawn(PlayerBody __instance)
     {
-        if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
         Player player = StickCompatibility.GetPlayer(__instance);
         if (!player) return;
+
+        if (NetworkManager.Singleton.IsClient && player.OwnerClientId == NetworkManager.Singleton.LocalClientId)
+        {
+            PowerupRuntime.NotifyLocalPlayerSpawned(player);
+        }
+
+        if (!(NetworkManager.Singleton.IsServer || NetworkManager.Singleton.IsHost)) return;
         powerupManagers[player] = new PowerupManager(player);
     }
 
@@ -84,10 +90,12 @@ public static class PlayerBodyV2_Patch
                 Vector3 tornadoCenter = __instance.transform.position;
                 float iceLevel = tornadoCenter.y; // Use tornado center Y as ice level reference
 
-                // Apply tornado force to the puck if it exists
-                if (puck)
+                // Apply tornado force to every active puck, including extra pucks spawned by other mods/modes.
+                Puck[] allPucks = GameObject.FindObjectsByType<Puck>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+                foreach (Puck tornadoPuck in allPucks)
                 {
-                    ApplyTornadoForce(puck.Rigidbody, puck.transform.position, tornadoCenter, iceLevel, 1.0f, tornadoRange, maxTornadoForce);
+                    if (!tornadoPuck || !tornadoPuck.Rigidbody) continue;
+                    ApplyTornadoForce(tornadoPuck.Rigidbody, tornadoPuck.transform.position, tornadoCenter, iceLevel, 1.0f, tornadoRange, maxTornadoForce);
                 }
 
                 // Get all players and apply tornado force to nearby ones

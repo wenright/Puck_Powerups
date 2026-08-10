@@ -13,7 +13,7 @@ public class Constants
 public class Plugin : IPuckPlugin
 {
   public static string MOD_NAME = "Powerups";
-  public static string MOD_VERSION = "0.7.0";
+  public static string MOD_VERSION = "0.8.0";
   public static string MOD_GUID = "wenright.powerups";
 
   static readonly Harmony harmony = new Harmony(MOD_GUID);
@@ -23,6 +23,7 @@ public class Plugin : IPuckPlugin
     try
     {
       harmony.PatchAll();
+      PowerupRuntime.EnsureCreated();
 
       Debug.Log($"Enabled {MOD_GUID}");
       
@@ -39,6 +40,7 @@ public class Plugin : IPuckPlugin
   {
     try
     {
+      PowerupRuntime.Shutdown();
       harmony.UnpatchSelf();
       return true;
     }

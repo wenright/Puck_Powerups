@@ -14,15 +14,19 @@
     </Reference>
   </ItemGroup>
 
-  <Target Name="PostBuildMoveDllDedicated" AfterTargets="Build">
+  <Target Name="PostBuildMoveDll" AfterTargets="Build" Condition="'$(SkipDeploy)' != 'true'">
     <PropertyGroup>
-      <TargetDir>C:\Program Files (x86)\Steam\steamapps\common\Puck Dedicated Server\Plugins\Powerups</TargetDir>
+      <DedicatedTargetDir>C:\Program Files (x86)\Steam\steamapps\common\Puck Dedicated Server\Plugins\Powerups</DedicatedTargetDir>
+      <ClientTargetDir>C:\Program Files (x86)\Steam\steamapps\common\Puck\Plugins\Powerups</ClientTargetDir>
     </PropertyGroup>
 
-    <MakeDir Directories="$(TargetDir)" />
-    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(TargetDir)" OverwriteReadOnlyFiles="true" />
+    <MakeDir Directories="$(DedicatedTargetDir)" Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Puck Dedicated Server')" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(DedicatedTargetDir)" OverwriteReadOnlyFiles="true" Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Puck Dedicated Server')" />
+
+    <MakeDir Directories="$(ClientTargetDir)" Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Puck')" />
+    <Copy SourceFiles="$(OutputPath)$(AssemblyName).dll" DestinationFolder="$(ClientTargetDir)" OverwriteReadOnlyFiles="true" Condition="Exists('C:\Program Files (x86)\Steam\steamapps\common\Puck')" />
     
-    <Message Importance="high" Text="Copied $(AssemblyName).dll to $(TargetDir)" />
+    <Message Importance="high" Text="Copied $(AssemblyName).dll to installed Puck server/client plugin folders when present" />
   </Target>
 
 </Project>

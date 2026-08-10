@@ -9,6 +9,7 @@ public class PowerupManager
   public Player player;
   public Powerup availablePowerup;
   public Powerup activePowerup;
+  public string lastPowerupName;
   public float lastUsedAt = 0;
   public float nextPowerupAvailableAt = 0;
 
@@ -18,6 +19,7 @@ public class PowerupManager
 
     lastUsedAt = Time.time;
     nextPowerupAvailableAt = Time.time + Powerup.GetCooldown();
+    PowerupRuntime.NotifyState(this);
   }
 
   public bool CanUse()
@@ -33,6 +35,7 @@ public class PowerupManager
 
     activePowerup = availablePowerup;
     availablePowerup = null;
+    lastPowerupName = activePowerup.name;
     nextPowerupAvailableAt = Time.time + Powerup.GetCooldown() + activePowerup.duration;
 
     // Special actions that happen when powerup is activated. Per-frame actions happen in PlayerBodyV2Patch
@@ -93,6 +96,8 @@ public class PowerupManager
         break;
     }
 
+    PowerupRuntime.NotifyPowerupStarted(this);
+
     return activePowerup;
   }
 
@@ -101,12 +106,17 @@ public class PowerupManager
     if (!CanUse()) return null;
 
     availablePowerup = PowerupList.dict.ElementAt(Random.Range(0, PowerupList.dict.Count)).Value;
+    PowerupRuntime.NotifyState(this);
 
     return availablePowerup;
   }
 
   public void End()
   {
+    if (activePowerup == null) return;
+
+    Powerup endedPowerup = activePowerup;
+
     if (CountActivePowerupByName(PowerupNames.LowGrav) <= 1)
     {
       SetGravity(true);
@@ -117,10 +127,11 @@ public class PowerupManager
       Time.timeScale = 1f;
     }
 
-    if (activePowerup.duration > 2.0f) {
-      UIChatPatch.SendToPlayer($"<b><color={activePowerup.color}>{activePowerup.name}</color></b> ended", player);
+    if (endedPowerup.duration > 2.0f) {
+      UIChatPatch.SendToPlayer($"<b><color={endedPowerup.color}>{endedPowerup.name}</color></b> ended", player);
     }
     activePowerup = null;
+    PowerupRuntime.NotifyPowerupEnded(this, endedPowerup.name);
   }
 
   private void SetGravity(bool enabled)
